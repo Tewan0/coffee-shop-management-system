@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ToastProvider } from "@/hooks/use-toast";
@@ -6,6 +6,13 @@ import { ToastProvider } from "@/hooks/use-toast";
 export const metadata: Metadata = {
   title: "BrewCraft - ระบบจัดการร้านกาแฟ (Coffee Shop Management System)",
   description: "ระบบบริหารจัดการร้านกาแฟขนาดเล็ก: แคชเชียร์ POS, คลังเมนูสินค้า, สรุปยอดขาย และรายงานวิเคราะห์",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

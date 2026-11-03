@@ -47,25 +47,21 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-coffee-100 bg-white/90 px-4 md:px-6 backdrop-blur-md">
+      <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-coffee-100 bg-white/95 px-4 md:px-6 backdrop-blur-md">
         {/* Mobile & Tablet Menu Button */}
         <div className="flex items-center gap-3 lg:hidden">
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-xl p-2 text-coffee-800 hover:bg-coffee-100 transition-colors"
+            onClick={() => setMobileMenuOpen(true)}
+            className="rounded-xl p-2.5 text-coffee-800 hover:bg-coffee-100 active:scale-95 transition-all"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? (
-              <X className="w-5 h-5" />
-            ) : (
-              <Menu className="w-5 h-5" />
-            )}
+            <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-coffee-800 flex items-center justify-center text-cream-50">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-600 to-coffee-800 flex items-center justify-center text-cream-50 shadow-sm">
               <Store className="w-4 h-4" />
             </div>
-            <span className="font-bold text-sm text-coffee-950 font-prompt">
+            <span className="font-bold text-sm sm:text-base text-coffee-950 font-prompt">
               BrewCraft
             </span>
           </div>
@@ -86,7 +82,7 @@ export function Header() {
         </div>
 
         {/* Status indicator & Quick action */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span className="font-prompt">Owner Connected</span>
@@ -95,51 +91,88 @@ export function Header() {
           {pathname !== "/pos" && (
             <Link
               href="/pos"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-medium shadow-sm transition-all"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-medium shadow-sm transition-all active:scale-95"
             >
               <Coffee className="w-3.5 h-3.5" />
-              <span className="font-prompt">ไปที่หน้า POS</span>
+              <span className="font-prompt">เปิด POS</span>
             </Link>
           )}
         </div>
 
-        {/* Mobile & Tablet Drawer */}
+        {/* Mobile & Tablet Drawer Modal */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 top-16 z-50 lg:hidden bg-stone-900/60 backdrop-blur-sm">
-            <div className="w-4/5 max-w-xs h-full bg-coffee-950 text-cream-50 p-4 shadow-2xl flex flex-col justify-between">
-              <nav className="space-y-1.5 pt-2">
-                <div className="px-3 pb-2 text-[11px] font-semibold tracking-wider uppercase text-coffee-400 font-prompt">
-                  เมนูหลัก
+          <div className="fixed inset-0 z-50 lg:hidden flex">
+            {/* Clickable Backdrop to close */}
+            <div
+              className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity animate-in fade-in"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+
+            {/* Sliding Drawer Content */}
+            <div className="relative z-10 w-4/5 max-w-xs h-full bg-coffee-950 text-cream-50 p-5 shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-200">
+              <div>
+                <div className="flex items-center justify-between pb-4 mb-4 border-b border-coffee-900/80">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-600 to-coffee-800 flex items-center justify-center text-cream-50 shadow-md">
+                      <Store className="w-5 h-5 text-cream-100" />
+                    </div>
+                    <div>
+                      <h2 className="font-bold text-sm text-cream-100 font-prompt">
+                        BrewCraft Coffee
+                      </h2>
+                      <p className="text-[10px] text-coffee-400">POS & Management</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1.5 rounded-xl text-coffee-400 hover:text-white hover:bg-coffee-900 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-                {NAV_ITEMS.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-                        isActive
-                          ? "bg-coffee-800 text-amber-200 font-semibold"
-                          : "text-coffee-300 hover:bg-coffee-900"
-                      )}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="font-prompt">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
+
+                <nav className="space-y-1.5">
+                  <div className="px-3 pb-2 text-[11px] font-semibold tracking-wider uppercase text-coffee-400 font-prompt">
+                    เมนูหลัก
+                  </div>
+                  {NAV_ITEMS.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all",
+                          isActive
+                            ? "bg-coffee-800 text-amber-200 font-semibold shadow-inner"
+                            : "text-coffee-300 hover:bg-coffee-900"
+                        )}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="font-prompt">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
 
               <div className="pt-4 border-t border-coffee-900">
                 <div className="flex items-center gap-3 mb-3 px-2">
-                  <div className="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center text-xs text-amber-200 font-semibold">
-                    {user?.displayName?.charAt(0) || "O"}
-                  </div>
+                  {user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt={user.displayName || "Owner"}
+                      className="w-9 h-9 rounded-full ring-2 ring-amber-500/30 object-cover"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-coffee-800 flex items-center justify-center text-xs text-amber-200 font-semibold ring-2 ring-coffee-700">
+                      {user?.displayName?.charAt(0) || "O"}
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-cream-100 truncate font-prompt">
+                    <p className="text-xs font-semibold text-cream-100 truncate font-prompt">
                       {user?.displayName || "Store Owner"}
                     </p>
                     <p className="text-[10px] text-coffee-400 truncate">
@@ -149,7 +182,7 @@ export function Header() {
                 </div>
                 <button
                   onClick={() => setIsLogoutModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-300 bg-rose-950/40 border border-rose-900/50"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium text-rose-300 bg-rose-950/40 border border-rose-900/50 hover:bg-rose-950/80 transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="font-prompt">ออกจากระบบ</span>

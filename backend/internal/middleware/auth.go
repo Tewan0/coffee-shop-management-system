@@ -60,7 +60,14 @@ func (m *MockAuthVerifier) VerifyIDToken(c *gin.Context, idToken string) (string
 }
 
 func AuthMiddleware(verifier TokenVerifier, ownerEmail string) gin.HandlerFunc {
-	normalizedOwnerEmail := strings.ToLower(strings.TrimSpace(ownerEmail))
+	// Parse one or more comma-separated allowed owner emails
+	allowedEmails := make(map[string]bool)
+	for _, e := range strings.Split(ownerEmail, ",") {
+		clean := strings.ToLower(strings.TrimSpace(e))
+		if clean != "" {
+			allowedEmails[clean] = true
+		}
+	}
 
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -109,7 +116,7 @@ func AuthMiddleware(verifier TokenVerifier, ownerEmail string) gin.HandlerFunc {
 			return
 		}
 
-		if normalizedOwnerEmail != "" && normalizedUserEmail != normalizedOwnerEmail {
+		if len(allowedEmails) > 0 && !allowedEmails[normalizedUserEmail] {
 			c.AbortWithStatusJSON(http.StatusForbidden, models.APIResponse{
 				Success: false,
 				Error:   "Access forbidden: this account is not authorized as the store owner",

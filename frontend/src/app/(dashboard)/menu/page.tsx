@@ -275,81 +275,152 @@ export default function MenuManagementPage() {
               ))}
             </div>
           ) : products.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm min-w-[620px]">
-                <thead className="bg-cream-100/60 border-b border-coffee-200/60 text-xs uppercase tracking-wider text-coffee-700 font-prompt">
-                  <tr>
-                    <th className="py-3.5 px-6 font-semibold">ชื่อเมนู</th>
-                    <th className="py-3.5 px-6 font-semibold">หมวดหมู่</th>
-                    <th className="py-3.5 px-6 font-semibold text-right">ราคา (บาท)</th>
-                    <th className="py-3.5 px-6 font-semibold text-center">สถานะการขาย</th>
-                    <th className="py-3.5 px-6 font-semibold text-right">จัดการ</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-coffee-100">
-                  {products.map((p) => (
-                    <tr
-                      key={p.id}
-                      className={cn(
-                        "hover:bg-coffee-50/50 transition-colors",
-                        !p.isActive && "opacity-60 bg-stone-50/50"
-                      )}
-                    >
-                      <td className="py-4 px-6 font-medium text-coffee-950 font-prompt">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-coffee-100 text-coffee-800 flex items-center justify-center flex-shrink-0">
-                            <Coffee className="w-4 h-4" />
+            <>
+              {/* Desktop & Tablet Table (md:) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[620px]">
+                  <thead className="bg-cream-100/60 border-b border-coffee-200/60 text-xs uppercase tracking-wider text-coffee-700 font-prompt">
+                    <tr>
+                      <th className="py-3.5 px-6 font-semibold">ชื่อเมนู</th>
+                      <th className="py-3.5 px-6 font-semibold">หมวดหมู่</th>
+                      <th className="py-3.5 px-6 font-semibold text-right">ราคา (บาท)</th>
+                      <th className="py-3.5 px-6 font-semibold text-center">สถานะการขาย</th>
+                      <th className="py-3.5 px-6 font-semibold text-right">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-coffee-100">
+                    {products.map((p) => (
+                      <tr
+                        key={p.id}
+                        className={cn(
+                          "hover:bg-coffee-50/50 transition-colors",
+                          !p.isActive && "opacity-60 bg-stone-50/50"
+                        )}
+                      >
+                        <td className="py-4 px-6 font-medium text-coffee-950 font-prompt">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-coffee-100 text-coffee-800 flex items-center justify-center flex-shrink-0">
+                              <Coffee className="w-4 h-4" />
+                            </div>
+                            <span>{p.name}</span>
                           </div>
-                          <span>{p.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <Badge variant="outline" className="text-xs">
-                          {p.category}
-                        </Badge>
-                      </td>
-                      <td className="py-4 px-6 text-right font-bold text-coffee-950 font-prompt">
-                        {formatCurrency(p.priceSatang)}
-                      </td>
-                      <td className="py-4 px-6 text-center">
-                        <Badge
-                          variant={p.isActive ? "success" : "danger"}
-                          className="cursor-pointer select-none"
-                          onClick={() =>
-                            setStatusConfirmModal({ open: true, product: p })
-                          }
-                        >
-                          {p.isActive ? "พร้อมขาย (Available)" : "ปิดการขาย (Unavailable)"}
-                        </Badge>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openEditModal(p)}
-                            className="h-8 px-2.5 text-xs text-coffee-700"
-                          >
-                            <Edit2 className="w-3.5 h-3.5 mr-1" />
-                            <span>แก้ไข</span>
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            size="sm"
+                        </td>
+                        <td className="py-4 px-6">
+                          <Badge variant="outline" className="text-xs">
+                            {p.category}
+                          </Badge>
+                        </td>
+                        <td className="py-4 px-6 text-right font-bold text-coffee-950 font-prompt">
+                          {formatCurrency(p.priceSatang)}
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          <Badge
+                            variant={p.isActive ? "success" : "danger"}
+                            className="cursor-pointer select-none"
                             onClick={() =>
                               setStatusConfirmModal({ open: true, product: p })
                             }
-                            className="h-8 px-2.5 text-xs"
                           >
-                            {p.isActive ? "ปิดขาย" : "เปิดขาย"}
-                          </Button>
+                            {p.isActive ? "พร้อมขาย (Available)" : "ปิดการขาย (Unavailable)"}
+                          </Badge>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openEditModal(p)}
+                              className="h-8 px-2.5 text-xs text-coffee-700"
+                            >
+                              <Edit2 className="w-3.5 h-3.5 mr-1" />
+                              <span>แก้ไข</span>
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() =>
+                                setStatusConfirmModal({ open: true, product: p })
+                              }
+                              className="h-8 px-2.5 text-xs"
+                            >
+                              {p.isActive ? "ปิดขาย" : "เปิดขาย"}
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Product Cards View (< md:) */}
+              <div className="md:hidden divide-y divide-coffee-100">
+                {products.map((p) => (
+                  <div
+                    key={p.id}
+                    className={cn(
+                      "p-4 transition-colors space-y-3",
+                      p.isActive ? "bg-white hover:bg-cream-50/50" : "bg-stone-50/80 opacity-75"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-coffee-100 text-coffee-800 flex items-center justify-center flex-shrink-0">
+                          <Coffee className="w-5 h-5" />
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        <div className="min-w-0">
+                          <h3 className="font-semibold text-coffee-950 text-sm font-prompt truncate">
+                            {p.name}
+                          </h3>
+                          <Badge variant="outline" className="text-[10px] mt-0.5">
+                            {p.category}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <span className="text-base font-bold text-coffee-950 font-prompt">
+                          {formatCurrency(p.priceSatang)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-coffee-100/60">
+                      <button
+                        onClick={() => setStatusConfirmModal({ open: true, product: p })}
+                        className="text-left"
+                      >
+                        <Badge
+                          variant={p.isActive ? "success" : "danger"}
+                          className="text-[11px] py-1 cursor-pointer"
+                        >
+                          {p.isActive ? "● พร้อมขาย" : "○ ปิดขายชั่วคราว"}
+                        </Badge>
+                      </button>
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEditModal(p)}
+                          className="h-9 px-3 text-xs text-coffee-800 border-coffee-300"
+                        >
+                          <Edit2 className="w-3.5 h-3.5 mr-1" />
+                          <span>แก้ไข</span>
+                        </Button>
+                        <Button
+                          variant={p.isActive ? "secondary" : "default"}
+                          size="sm"
+                          onClick={() => setStatusConfirmModal({ open: true, product: p })}
+                          className="h-9 px-3 text-xs"
+                        >
+                          {p.isActive ? "ปิดขาย" : "เปิดขาย"}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="py-16 text-center">
               <Coffee className="w-12 h-12 text-coffee-300 mx-auto mb-3" />

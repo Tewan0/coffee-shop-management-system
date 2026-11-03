@@ -192,7 +192,7 @@ export default function PosPage() {
         </button>
       </div>
 
-      <div className="h-[calc(100vh-8.5rem)] lg:h-[calc(100vh-6.5rem)] flex flex-col lg:flex-row gap-6 animate-in fade-in duration-300 relative">
+      <div className="h-[calc(100dvh-8.5rem)] min-h-[520px] lg:h-[calc(100dvh-6.5rem)] flex flex-col lg:flex-row gap-4 sm:gap-6 animate-in fade-in duration-300 relative">
         {/* Left side: Product catalog grid */}
         <div
           className={cn(

@@ -98,3 +98,27 @@ func TestAuthMiddleware_OwnerAllowed_Returns200(t *testing.T) {
 	}
 }
 
+func TestAuthMiddleware_MultipleOwnerEmails_Returns200(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+	verifier := &mockCustomVerifier{
+		uid:      "owner2-uid",
+		email:    "second_owner@coffeeshop.com",
+		name:     "Second Owner",
+		verified: true,
+	}
+	r.Use(middleware.AuthMiddleware(verifier, "owner1@coffeeshop.com, second_owner@coffeeshop.com, third@coffeeshop.com"))
+	r.GET("/protected", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"ok": true})
+	})
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+	req.Header.Set("Authorization", "Bearer token-owner2")
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 OK for second owner email, got: %d", w.Code)
+	}
+}
+

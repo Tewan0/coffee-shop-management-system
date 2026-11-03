@@ -191,59 +191,109 @@ export default function SalesHistoryPage() {
               ))}
             </div>
           ) : orders.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm min-w-[640px]">
-                <thead className="bg-cream-100/60 border-b border-coffee-200/60 text-xs uppercase tracking-wider text-coffee-700 font-prompt">
-                  <tr>
-                    <th className="py-3.5 px-6 font-semibold">รหัสบิล</th>
-                    <th className="py-3.5 px-6 font-semibold">วัน-เวลาที่ขาย</th>
-                    <th className="py-3.5 px-6 font-semibold">รายการในบิล</th>
-                    <th className="py-3.5 px-6 font-semibold text-center">จำนวนชิ้น</th>
-                    <th className="py-3.5 px-6 font-semibold text-right">ยอดรวมสุทธิ</th>
-                    <th className="py-3.5 px-6 font-semibold text-center">การกระทำ</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-coffee-100">
-                  {orders.map((ord) => (
-                    <tr
-                      key={ord.id}
-                      className="hover:bg-coffee-50/50 transition-colors cursor-pointer"
-                      onClick={() => viewOrderDetails(ord.id)}
-                    >
-                      <td className="py-3.5 px-6 font-mono text-xs text-amber-900 font-medium">
+            <>
+              {/* Desktop & Tablet Table (md:) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[640px]">
+                  <thead className="bg-cream-100/60 border-b border-coffee-200/60 text-xs uppercase tracking-wider text-coffee-700 font-prompt">
+                    <tr>
+                      <th className="py-3.5 px-6 font-semibold">รหัสบิล</th>
+                      <th className="py-3.5 px-6 font-semibold">วัน-เวลาที่ขาย</th>
+                      <th className="py-3.5 px-6 font-semibold">รายการในบิล</th>
+                      <th className="py-3.5 px-6 font-semibold text-center">จำนวนชิ้น</th>
+                      <th className="py-3.5 px-6 font-semibold text-right">ยอดรวมสุทธิ</th>
+                      <th className="py-3.5 px-6 font-semibold text-center">การกระทำ</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-coffee-100">
+                    {orders.map((ord) => (
+                      <tr
+                        key={ord.id}
+                        className="hover:bg-coffee-50/50 transition-colors cursor-pointer"
+                        onClick={() => viewOrderDetails(ord.id)}
+                      >
+                        <td className="py-3.5 px-6 font-mono text-xs text-amber-900 font-medium">
+                          #{ord.id.substring(0, 10)}
+                        </td>
+                        <td className="py-3.5 px-6 text-xs text-coffee-600 font-prompt">
+                          {formatDateTime(ord.createdAt)}
+                        </td>
+                        <td className="py-3.5 px-6 text-xs font-medium text-coffee-900 max-w-xs truncate">
+                          {ord.items.map((it) => `${it.productName} (x${it.quantity})`).join(", ")}
+                        </td>
+                        <td className="py-3.5 px-6 text-center text-xs text-coffee-700 font-prompt">
+                          {ord.totalQuantity} ชิ้น
+                        </td>
+                        <td className="py-3.5 px-6 text-right font-bold text-coffee-950 font-prompt">
+                          {formatCurrency(ord.totalSatang)}
+                        </td>
+                        <td className="py-3.5 px-6 text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-2 text-xs text-coffee-700 hover:text-coffee-950"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              viewOrderDetails(ord.id);
+                            }}
+                          >
+                            <Eye className="w-3.5 h-3.5 mr-1" />
+                            <span>ดูบิล</span>
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Sales Cards View (< md:) */}
+              <div className="md:hidden divide-y divide-coffee-100">
+                {orders.map((ord) => (
+                  <div
+                    key={ord.id}
+                    onClick={() => viewOrderDetails(ord.id)}
+                    className="p-4 hover:bg-cream-50/60 active:bg-cream-100/60 transition-colors cursor-pointer space-y-2.5"
+                  >
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-mono text-amber-900 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60">
                         #{ord.id.substring(0, 10)}
-                      </td>
-                      <td className="py-3.5 px-6 text-xs text-coffee-600 font-prompt">
+                      </span>
+                      <span className="text-coffee-500 text-[11px] font-prompt">
                         {formatDateTime(ord.createdAt)}
-                      </td>
-                      <td className="py-3.5 px-6 text-xs font-medium text-coffee-900 max-w-xs truncate">
-                        {ord.items.map((it) => `${it.productName} (x${it.quantity})`).join(", ")}
-                      </td>
-                      <td className="py-3.5 px-6 text-center text-xs text-coffee-700 font-prompt">
-                        {ord.totalQuantity} ชิ้น
-                      </td>
-                      <td className="py-3.5 px-6 text-right font-bold text-coffee-950 font-prompt">
-                        {formatCurrency(ord.totalSatang)}
-                      </td>
-                      <td className="py-3.5 px-6 text-center">
+                      </span>
+                    </div>
+
+                    <p className="text-xs font-medium text-coffee-950 line-clamp-2 leading-relaxed">
+                      {ord.items.map((it) => `${it.productName} (x${it.quantity})`).join(", ")}
+                    </p>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-coffee-100/60">
+                      <div className="text-xs text-coffee-600 font-prompt">
+                        จำนวน <span className="font-semibold text-coffee-900">{ord.totalQuantity}</span> ชิ้น
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-bold text-coffee-950 font-prompt">
+                          {formatCurrency(ord.totalSatang)}
+                        </span>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 px-2 text-xs text-coffee-700 hover:text-coffee-950"
+                          className="h-8 px-2 text-xs text-amber-800 hover:text-amber-950 hover:bg-amber-100/50"
                           onClick={(e) => {
                             e.stopPropagation();
                             viewOrderDetails(ord.id);
                           }}
                         >
                           <Eye className="w-3.5 h-3.5 mr-1" />
-                          <span>ดูบิล</span>
+                          <span>ดู</span>
                         </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="py-16 text-center">
               <Receipt className="w-12 h-12 text-coffee-300 mx-auto mb-3" />
