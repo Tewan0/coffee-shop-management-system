@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Direct client read and write operations from Firebase client SDKs are strictly disallowed.
+    // All business logic, authorization, orders processing, and data modifications
+    // are executed exclusively through the Go REST API backend using the Firebase Admin SDK.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

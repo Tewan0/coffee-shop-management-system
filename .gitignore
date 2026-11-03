@@ -1,0 +1,35 @@
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Go
+backend/bin/
+backend/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Environment variables and secrets
+.env
+.env*.local
+*.env
+!.env.example
+*.pem
+*.key
+serviceAccountKey.json
+*serviceAccount*.json
+*firebase-adminsdk*.json
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
