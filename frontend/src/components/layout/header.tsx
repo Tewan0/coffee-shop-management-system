@@ -48,8 +48,8 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-coffee-100 bg-white/90 px-4 md:px-6 backdrop-blur-md">
-        {/* Mobile Menu Button */}
-        <div className="flex items-center gap-3 md:hidden">
+        {/* Mobile & Tablet Menu Button */}
+        <div className="flex items-center gap-3 lg:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="rounded-xl p-2 text-coffee-800 hover:bg-coffee-100 transition-colors"
@@ -72,7 +72,7 @@ export function Header() {
         </div>
 
         {/* Desktop breadcrumb / greetings */}
-        <div className="hidden md:flex items-center gap-2 text-sm text-coffee-600">
+        <div className="hidden lg:flex items-center gap-2 text-sm text-coffee-600">
           <span className="font-prompt text-coffee-800 font-semibold">
             ระบบจัดการร้านกาแฟ
           </span>
@@ -103,9 +103,9 @@ export function Header() {
           )}
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile & Tablet Drawer */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 top-16 z-50 md:hidden bg-stone-900/60 backdrop-blur-sm">
+          <div className="fixed inset-0 top-16 z-50 lg:hidden bg-stone-900/60 backdrop-blur-sm">
             <div className="w-4/5 max-w-xs h-full bg-coffee-950 text-cream-50 p-4 shadow-2xl flex flex-col justify-between">
               <nav className="space-y-1.5 pt-2">
                 <div className="px-3 pb-2 text-[11px] font-semibold tracking-wider uppercase text-coffee-400 font-prompt">

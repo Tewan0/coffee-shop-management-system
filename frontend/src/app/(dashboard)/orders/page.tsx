@@ -192,7 +192,7 @@ export default function SalesHistoryPage() {
             </div>
           ) : orders.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[640px]">
                 <thead className="bg-cream-100/60 border-b border-coffee-200/60 text-xs uppercase tracking-wider text-coffee-700 font-prompt">
                   <tr>
                     <th className="py-3.5 px-6 font-semibold">รหัสบิล</th>

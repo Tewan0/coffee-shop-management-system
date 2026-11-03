@@ -276,7 +276,7 @@ export default function MenuManagementPage() {
             </div>
           ) : products.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[620px]">
                 <thead className="bg-cream-100/60 border-b border-coffee-200/60 text-xs uppercase tracking-wider text-coffee-700 font-prompt">
                   <tr>
                     <th className="py-3.5 px-6 font-semibold">ชื่อเมนู</th>
