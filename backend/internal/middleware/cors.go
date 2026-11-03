@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -8,7 +10,8 @@ func CORSMiddleware(allowedOrigin string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
 		if origin != "" {
-			if allowedOrigin == "*" || origin == allowedOrigin {
+			// Allow configured origin, wildcard, or any local development origin
+			if allowedOrigin == "*" || origin == allowedOrigin || strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:") {
 				c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			}
 		} else if allowedOrigin == "*" {

@@ -131,3 +131,4 @@ func (h *ProductHandler) SetStatus(c *gin.Context) {
 		Message: "Product status updated successfully",
 	})
 }
+

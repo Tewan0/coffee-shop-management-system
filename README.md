@@ -307,3 +307,4 @@ npm run build
 1. **Owner-Only Authentication**: ระบบออกแบบมาสำหรับร้านกาแฟขนาดเล็กที่มีผู้ดูแลระบบเพียงบทบาทเดียวคือเจ้าของร้าน (Owner) จึงยังไม่รองรับระบบแยกสิทธิ์พนักงาน (Staff / Barista RBAC)
 2. **Online Connection**: การทำงานของ POS ต้องเชื่อมต่อกับ Go Backend เพื่อตรวจสอบราคาและบันทึกบิล ไม่รองรับ Offline IndexedDB Sync ในเวอร์ชันนี้
 3. **No Direct Inventory Depletion**: ในเวอร์ชันนี้ยังไม่มีระบบสต็อกวัตถุดิบ (Raw Ingredient Inventory) เมนูจะแสดงสถานะตาม Flag `isActive` (พร้อมขาย/ปิดการขาย)
+

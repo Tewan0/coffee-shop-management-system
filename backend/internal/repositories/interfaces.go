@@ -24,3 +24,4 @@ type UserRepository interface {
 	Upsert(ctx context.Context, u *models.User) error
 	GetByID(ctx context.Context, uid string) (*models.User, error)
 }
+

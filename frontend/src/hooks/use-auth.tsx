@@ -31,6 +31,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const getFriendlyErrorMessage = (err: any): string => {
+    if (err instanceof ApiError && err.status === 403) {
+      return "บัญชี Google นี้ไม่ได้รับอนุญาตให้เข้าใช้งานระบบ (เฉพาะเจ้าของร้านที่กำหนดใน OWNER_EMAIL เท่านั้น)";
+    }
+    if (err?.code === "auth/operation-not-allowed") {
+      return "ยังไม่ได้เปิดใช้งาน Google Sign-In ใน Firebase Console (ไปที่ Firebase Console -> Authentication -> Sign-in method -> เปิดใช้งาน Google)";
+    }
+    if (err?.code === "auth/popup-closed-by-user") {
+      return "หน้าต่างเข้าสู่ระบบ Google ถูกปิดก่อนทำรายการเสร็จ";
+    }
+    if (err?.code === "auth/popup-blocked") {
+      return "บราวเซอร์บล็อกป๊อปอัป กรุณาอนุญาตป๊อปอัปสำหรับหน้านี้แล้วลองใหม่อีกครั้ง";
+    }
+    if (err?.code === "auth/unauthorized-domain") {
+      return "โดเมนนี้ยังไม่ได้รับอนุญาตใน Firebase Authentication (ไปที่ Firebase Console -> Authentication -> Settings -> Authorized domains)";
+    }
+    if (err?.message?.includes("Failed to fetch") || err?.message?.includes("NetworkError")) {
+      return "ไม่สามารถเชื่อมต่อกับ Go Backend ได้ (กรุณาตรวจสอบว่ารัน 'go run ./cmd/server/main.go' ที่พอร์ต 8080 อยู่หรือไม่)";
+    }
+    return err?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ";
+  };
+
   useEffect(() => {
     // Listen to Firebase client auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
@@ -47,15 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setError(null);
         } catch (err: any) {
           console.error("Auth verification with Go backend failed:", err);
-          if (err instanceof ApiError && err.status === 403) {
-            setError(
-              "บัญชีนี้ไม่ได้รับอนุญาตให้เข้าใช้งานระบบ (เฉพาะเจ้าของร้านที่กำหนดใน OWNER_EMAIL เท่านั้น)"
-            );
-          } else {
-            setError(
-              err.message || "เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์กับเซิร์ฟเวอร์ Go"
-            );
-          }
+          setError(getFriendlyErrorMessage(err));
           // Reset states upon authorization failure
           await firebaseSignOut(auth).catch(() => {});
           setUser(null);
@@ -87,17 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(profile);
     } catch (err: any) {
       console.error("Login error:", err);
-      if (err instanceof ApiError && err.status === 403) {
-        setError(
-          "บัญชีนี้ไม่ได้รับอนุญาตให้เข้าใช้งานระบบ (เฉพาะเจ้าของร้านที่กำหนดใน OWNER_EMAIL เท่านั้น)"
-        );
-      } else if (err.code === "auth/popup-closed-by-user") {
-        setError("การเข้าสู่ระบบถูกยกเลิก");
-      } else {
-        setError(
-          err.message || "เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบ Firebase / Go Backend"
-        );
-      }
+      setError(getFriendlyErrorMessage(err));
       await firebaseSignOut(auth).catch(() => {});
       setUser(null);
       setToken(null);
@@ -150,3 +154,4 @@ export function useAuth() {
   }
   return context;
 }
+

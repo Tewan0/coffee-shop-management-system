@@ -127,3 +127,4 @@ func (s *DashboardService) GetSummary(ctx context.Context) (*models.DashboardSum
 		RecentOrders:     recentOrders,
 	}, nil
 }
+

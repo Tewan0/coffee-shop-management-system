@@ -42,3 +42,4 @@ func (h *AuthHandler) Me(c *gin.Context) {
 		Data:    user,
 	})
 }
+

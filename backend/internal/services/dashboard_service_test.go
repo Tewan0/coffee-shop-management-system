@@ -78,3 +78,4 @@ func TestDashboardService_GetSummary(t *testing.T) {
 		t.Errorf("expected 7 days of sales stats, got: %d", len(summary.SalesLast7Days))
 	}
 }
+

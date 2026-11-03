@@ -97,3 +97,4 @@ func TestAuthMiddleware_OwnerAllowed_Returns200(t *testing.T) {
 		t.Fatalf("expected 200 OK, got: %d", w.Code)
 	}
 }
+

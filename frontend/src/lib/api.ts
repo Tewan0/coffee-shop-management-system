@@ -149,3 +149,4 @@ export async function fetchOrderById(id: string, token: string) {
 export async function fetchDashboardSummary(token: string) {
   return request<any>("/api/v1/dashboard/summary", { method: "GET" }, token);
 }
+

@@ -96,3 +96,4 @@ func (h *OrderHandler) GetByID(c *gin.Context) {
 		Data:    order,
 	})
 }
+

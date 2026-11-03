@@ -13,6 +13,7 @@ import {
   Clock,
   User,
   CheckCircle,
+  Printer,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -368,7 +369,16 @@ export default function SalesHistoryPage() {
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex items-center justify-between pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.print()}
+                className="flex items-center gap-1.5 text-xs text-coffee-800 border-coffee-300 hover:bg-cream-100"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>พิมพ์ใบเสร็จ</span>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -383,3 +393,4 @@ export default function SalesHistoryPage() {
     </div>
   );
 }
+

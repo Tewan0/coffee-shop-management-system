@@ -126,3 +126,4 @@ func AuthMiddleware(verifier TokenVerifier, ownerEmail string) gin.HandlerFunc {
 		c.Next()
 	}
 }
+

@@ -123,3 +123,4 @@ func TestOrderService_CreateOrder_NegativeOrZeroQuantityRejected(t *testing.T) {
 		t.Fatal("expected error on negative quantity, got nil")
 	}
 }
+

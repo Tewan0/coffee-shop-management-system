@@ -19,3 +19,4 @@ func (h *HealthHandler) Check(c *gin.Context) {
 		"version": "1.0.0",
 	})
 }
+

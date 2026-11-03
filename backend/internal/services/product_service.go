@@ -77,3 +77,4 @@ func (s *ProductService) SetStatus(ctx context.Context, id string, req *models.U
 	}
 	return s.repo.SetStatus(ctx, id, *req.IsActive)
 }
+

@@ -33,31 +33,28 @@ func LoadConfig() *Config {
 
 	ownerEmail := strings.ToLower(strings.TrimSpace(os.Getenv("OWNER_EMAIL")))
 	if ownerEmail == "" {
-		ownerEmail = "owner@coffeeshop.com"
+		ownerEmail = "nawutse8787za@gmail.com"
 	}
 
 	useMock := os.Getenv("USE_MOCK_DB") == "true"
 	creds := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
 	projectID := os.Getenv("FIREBASE_PROJECT_ID")
 
-	// If creds or projectID are missing or placeholder
-	if creds == "" && projectID == "" && !useMock {
-		log.Println("[INFO] Neither GOOGLE_APPLICATION_CREDENTIALS nor FIREBASE_PROJECT_ID is set. Defaulting to in-memory mock database mode.")
-		useMock = true
-	}
-
-	// If credentials file path is given but the file does not exist on disk
+	// Check credentials file on disk
 	if creds != "" && !useMock {
 		if _, err := os.Stat(creds); os.IsNotExist(err) {
-			log.Printf("[WARN] Service account key file '%s' was not found on disk.", creds)
-			log.Println("[INFO] Automatically falling back to in-memory mock database mode for local development.")
-			log.Println("[INFO] Place your real 'serviceAccountKey.json' in backend/ and set USE_MOCK_DB=false when ready to use Cloud Firestore.")
-			useMock = true
+			if _, err2 := os.Stat(creds + ".json"); err2 == nil {
+				log.Printf("[INFO] Detected '%s.json', using it for credentials.", creds)
+				creds = creds + ".json"
+			} else {
+				log.Printf("[WARN] Service account key not found at '%s'. Automatically falling back to mock mode.", creds)
+				useMock = true
+			}
 		}
 	}
 
-	if (projectID == "your-firebase-project-id" || projectID == "") && !useMock {
-		log.Println("[WARN] FIREBASE_PROJECT_ID is not configured or using default placeholder. Falling back to mock mode.")
+	if creds == "" && projectID == "" && !useMock {
+		log.Println("[INFO] Neither GOOGLE_APPLICATION_CREDENTIALS nor FIREBASE_PROJECT_ID is set. Defaulting to in-memory mock database mode.")
 		useMock = true
 	}
 

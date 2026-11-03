@@ -38,3 +38,4 @@ func (s *AuthService) SyncUserProfile(ctx context.Context, uid, email, displayNa
 	}
 	return user, nil
 }
+

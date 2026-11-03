@@ -13,11 +13,13 @@ import {
   ShoppingBag,
   CreditCard,
   X,
+  Printer,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { fetchProducts, createOrder } from "@/lib/api";
-import { Product, CartItem, ProductCategory, PRODUCT_CATEGORIES } from "@/types";
+import { Product, CartItem, ProductCategory, PRODUCT_CATEGORIES, Order } from "@/types";
 import { formatCurrency, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +42,8 @@ export default function PosPage() {
   // Checkout confirmation modal
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [submittingOrder, setSubmittingOrder] = useState(false);
-  const [lastPlacedOrderId, setLastPlacedOrderId] = useState<string | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [lastPlacedOrder, setLastPlacedOrder] = useState<Order | null>(null);
 
   const loadProducts = async () => {
     if (!token) return;
@@ -125,8 +128,9 @@ export default function PosPage() {
       };
 
       const order = await createOrder(payload, token);
-      setLastPlacedOrderId(order.id);
+      setLastPlacedOrder(order);
       setIsConfirmOpen(false);
+      setIsSuccessModalOpen(true);
       clearCart();
 
       toast({
@@ -135,7 +139,7 @@ export default function PosPage() {
           order.totalSatang
         )}`,
         type: "success",
-        duration: 5000,
+        duration: 4000,
       });
     } catch (err: any) {
       toast({
@@ -420,6 +424,61 @@ export default function PosPage() {
           </div>
         </div>
       </Dialog>
+
+      {/* Order Success & Print Modal */}
+      <Dialog
+        open={isSuccessModalOpen}
+        onOpenChange={setIsSuccessModalOpen}
+        title="บันทึกการขายสำเร็จเรียบร้อย"
+        description={lastPlacedOrder ? `บิลเลขที่ #${lastPlacedOrder.id.substring(0, 10)}` : ""}
+      >
+        {lastPlacedOrder && (
+          <div className="space-y-4">
+            <div className="text-center py-3">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <p className="text-xl font-bold text-coffee-950 font-prompt">
+                {formatCurrency(lastPlacedOrder.totalSatang)}
+              </p>
+              <p className="text-xs text-coffee-500 mt-0.5">
+                ชำระเงินเรียบร้อย • สินค้าทั้งหมด {lastPlacedOrder.totalQuantity} ชิ้น
+              </p>
+            </div>
+
+            <div className="border border-coffee-200 rounded-xl p-3 bg-cream-50 text-xs space-y-1.5 max-h-48 overflow-y-auto">
+              {lastPlacedOrder.items.map((it, idx) => (
+                <div key={idx} className="flex justify-between text-coffee-800">
+                  <span>{it.productName} x {it.quantity}</span>
+                  <span className="font-semibold text-coffee-950 font-prompt">
+                    {formatCurrency(it.subtotalSatang)}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-coffee-100">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.print()}
+                className="flex items-center gap-1.5 text-xs text-coffee-800 border-coffee-300"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>พิมพ์ใบเสร็จ</span>
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setIsSuccessModalOpen(false)}
+                className="bg-coffee-800 hover:bg-coffee-900 text-white font-prompt"
+              >
+                ทำรายการต่อไป
+              </Button>
+            </div>
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 }
+

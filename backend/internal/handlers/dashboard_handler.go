@@ -32,3 +32,4 @@ func (h *DashboardHandler) GetSummary(c *gin.Context) {
 		Data:    summary,
 	})
 }
+
