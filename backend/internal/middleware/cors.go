@@ -24,21 +24,26 @@ func CORSMiddleware(allowedOrigin string) gin.HandlerFunc {
 		if origin != "" {
 			// Allow if:
 			// 1. Wildcard allowAll is true
-			// 2. Exact match in allowedMap (configured via ALLOWED_ORIGINS)
-			// 3. Any localhost / 127.0.0.1 development port
+			// 2. Exact match in allowedMap (configured via FRONTEND_ORIGIN / ALLOWED_ORIGINS)
+			// 3. Any Vercel deployment domain (*.vercel.app)
+			// 4. Any localhost / 127.0.0.1 development port
+			// 5. Local LAN IP for mobile testing (192.168.x.x, 10.x.x.x, 172.x.x.x)
+			isVercel := strings.HasSuffix(origin, ".vercel.app")
 			isLocal := strings.HasPrefix(origin, "http://localhost:") ||
 				strings.HasPrefix(origin, "http://127.0.0.1:") ||
 				origin == "http://localhost" ||
 				origin == "http://127.0.0.1"
+			isLAN := strings.HasPrefix(origin, "http://192.168.") ||
+				strings.HasPrefix(origin, "http://10.") ||
+				strings.HasPrefix(origin, "http://172.")
 
-			if allowAll || allowedMap[origin] || isLocal {
+			if allowAll || allowedMap[origin] || isVercel || isLocal || isLAN {
 				c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+				c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 			}
 		} else {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		}
-
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, PATCH, DELETE")
 

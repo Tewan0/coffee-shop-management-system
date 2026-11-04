@@ -29,6 +29,12 @@ func LoadConfig() *Config {
 
 	frontendOrigin := os.Getenv("FRONTEND_ORIGIN")
 	if frontendOrigin == "" {
+		frontendOrigin = os.Getenv("ALLOWED_ORIGINS")
+	}
+	if frontendOrigin == "" {
+		frontendOrigin = os.Getenv("ALLOWED_ORIGIN")
+	}
+	if frontendOrigin == "" {
 		frontendOrigin = "http://localhost:3000"
 	}
 
