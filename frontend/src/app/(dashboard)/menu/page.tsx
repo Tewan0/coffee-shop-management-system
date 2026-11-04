@@ -391,9 +391,9 @@ export default function MenuManagementPage() {
                       >
                         <Badge
                           variant={p.isActive ? "success" : "danger"}
-                          className="text-[11px] py-1 cursor-pointer"
+                          className="text-[11px] py-1 cursor-pointer font-medium"
                         >
-                          {p.isActive ? "● พร้อมขาย" : "○ ปิดขายชั่วคราว"}
+                          {p.isActive ? "พร้อมขาย" : "ปิดการขาย"}
                         </Badge>
                       </button>
 

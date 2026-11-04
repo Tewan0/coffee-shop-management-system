@@ -663,8 +663,8 @@ export default function PosPage() {
               <p className="text-lg font-bold text-coffee-950 font-prompt">
                 รับชำระเงินสำเร็จเรียบร้อย!
               </p>
-              <p className="text-xs text-coffee-500">
-                ยอดสุทธิ {formatCurrency(lastPlacedOrder.totalSatang)} • สินค้าทั้งหมด {lastPlacedOrder.totalQuantity} ชิ้น
+              <p className="text-xs text-coffee-500 font-prompt">
+                ยอดสุทธิ {formatCurrency(lastPlacedOrder.totalSatang)} (จำนวน {lastPlacedOrder.totalQuantity} ชิ้น)
               </p>
             </div>
 

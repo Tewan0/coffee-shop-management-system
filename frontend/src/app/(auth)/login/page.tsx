@@ -105,7 +105,7 @@ export default function LoginPage() {
         {/* Footer info */}
         <div className="mt-8 pt-6 border-t border-coffee-100 text-center">
           <p className="text-xs text-coffee-400">
-            Next.js App Router • Go Gin Backend • Cloud Firestore
+            Next.js App Router / Go Gin Backend / Cloud Firestore
           </p>
         </div>
       </div>

@@ -24,8 +24,8 @@ export function ThermalReceipt({
     >
       {/* Receipt Header */}
       <div className="text-center pb-3 border-b border-dashed border-stone-400 space-y-0.5">
-        <h2 className="text-base font-bold tracking-wider font-prompt text-coffee-950">
-          ☕ BrewCraft Coffee
+        <h2 className="text-base font-bold tracking-wider font-prompt text-coffee-950 uppercase">
+          BrewCraft Coffee
         </h2>
         <p className="text-[10px] text-stone-600">
           Specialty Coffee & Bakery

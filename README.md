@@ -1,4 +1,4 @@
-# ☕ BrewCraft - Coffee Shop Management System
+# BrewCraft - Coffee Shop Management System
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![Go](https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat-square&logo=go)](https://go.dev/)
@@ -7,64 +7,66 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-**BrewCraft** คือเว็บแอปพลิเคชันระบบจัดการร้านกาแฟขนาดเล็ก พัฒนาด้วยสถาปัตยกรรม Monorepo โดยแบ่งหน้าที่ชัดเจน:
+BrewCraft คือเว็บแอปพลิเคชันระบบจัดการร้านกาแฟขนาดเล็ก พัฒนาด้วยสถาปัตยกรรม Monorepo โดยแบ่งหน้าที่ชัดเจน:
 - **Frontend**: พัฒนาด้วย **Next.js (App Router)** ทำหน้าที่แสดงผล UI แคชเชียร์และแดชบอร์ด
 - **Backend หลัก**: พัฒนาด้วยภาษา **Go (Gin Framework)** ทำหน้าที่ควบคุม Business Logic, คำนวณราคาสินค้า, ตรวจสอบความถูกต้อง, สรุปรายงาน และจัดการฐานข้อมูล
 - **Database & Auth**: ใช้ **Firebase Cloud Firestore** เป็นฐานข้อมูล และ **Firebase Authentication (Google Sign-In)** สำหรับตรวจสอบสิทธิ์เจ้าของร้าน
 
 ---
 
-## 📌 สารบัญ (Table of Contents)
-1. [ฟีเจอร์เด่นของระบบ (Key Features)](#-1-ฟีเจอร์เด่นของระบบ-key-features)
-2. [วิธีเริ่มต้นใช้งานด่วน (Quick Start)](#-2-วิธีเริ่มต้นใช้งานด่วน-quick-start)
-3. [การตั้งค่า Environment Variables](#-3-การตั้งค่า-environment-variables)
-4. [สถาปัตยกรรมและความปลอดภัย (Architecture & Security)](#-4-สถาปัตยกรรมและความปลอดภัย-architecture--security)
-5. [โครงสร้างโค้ด (Project Structure)](#-5-โครงสร้างโค้ด-project-structure)
-6. [รายการ API (REST API Endpoints)](#-6-รายการ-api-rest-api-endpoints)
-7. [การทดสอบระบบ (Automated Tests)](#-7-การทดสอบระบบ-automated-tests)
+## สารบัญ (Table of Contents)
+1. [ฟีเจอร์เด่นของระบบ (Key Features)](#1-ฟีเจอร์เด่นของระบบ-key-features)
+2. [วิธีเริ่มต้นใช้งานด่วน (Quick Start)](#2-วิธีเริ่มต้นใช้งานด่วน-quick-start)
+3. [การตั้งค่า Environment Variables](#3-การตั้งค่า-environment-variables)
+4. [สถาปัตยกรรมและความปลอดภัย (Architecture & Security)](#4-สถาปัตยกรรมและความปลอดภัย-architecture--security)
+5. [โครงสร้างโค้ด (Project Structure)](#5-โครงสร้างโค้ด-project-structure)
+6. [รายการ API (REST API Endpoints)](#6-รายการ-api-rest-api-endpoints)
+7. [การทดสอบระบบ (Automated Tests)](#7-การทดสอบระบบ-automated-tests)
 
 ---
 
-## ✨ 1. ฟีเจอร์เด่นของระบบ (Key Features)
+## 1. ฟีเจอร์เด่นของระบบ (Key Features)
 
-### 📊 แดชบอร์ดภาพรวมร้าน (Dashboard & Analytics)
+### แดชบอร์ดภาพรวมร้าน (Dashboard & Analytics)
 - สรุปยอดขายรวมวันนี้, จำนวนบิล, และจำนวนสินค้าที่ขายได้แบบเรียลไทม์
 - แสดง **เมนูขายดีที่สุด (Best Seller)** ประจำวัน
 - **กราฟแท่งแนวโน้มยอดขายย้อนหลัง 7 วัน** (พัฒนาด้วย Recharts)
 - แสดง 10 บิลล่าสุดที่เกิดขึ้นในร้าน
 - คำนวณเวลาและตัดรอบวันอย่างแม่นยำตามเขตเวลาประเทศไทย (`Asia/Bangkok`, UTC+7)
 
-### 🛒 แคชเชียร์ขายหน้าร้าน (Point of Sale - POS)
+### แคชเชียร์ขายหน้าร้าน (Point of Sale - POS)
 - เลือกเมนูสินค้า, ค้นหาตามชื่อ, และกรองตามหมวดหมู่ (Coffee, Tea, Other Drinks, Bakery)
 - เพิ่ม/ลดจำนวนสินค้าในตะกร้า คำนวณยอดเงินรวมอัตโนมัติ
-- **Responsive สำหรับ iPad & มือถือ**:
-  - **iPad แนวนอน / Desktop**: แสดงหน้าจอสองฝั่ง (รายการสินค้าทางซ้าย + ตะกร้าทางขวา) พร้อมทำงานจริง
+- รองรับการเลือกวิธีชำระเงิน (เงินสด หรือ สแกน QR Code) พร้อมระบบคำนวณเงินทอนอัตโนมัติ
+- **Responsive สำหรับ iPad และมือถือ**:
+  - **iPad แนวนอน / Desktop**: แสดงหน้าจอสองฝั่ง (รายการสินค้าทางซ้าย และตะกร้าทางขวา) พร้อมทำงานจริง
   - **iPad แนวตั้ง / มือถือ**: มีแท็บสลับ `เมนูสินค้า` และ `ตะกร้าสินค้า` พร้อมแถบลอย **Floating Cart Pill** กดสลับดูยอดได้ในคลิกเดียว
   - ความสูงปรับแบบ `100dvh` ป้องกันการโดนแถบ URL ของ Safari/Chrome ทับปุ่มบันทึก
 - มีหน้าต่าง Pop-up ยืนยันการคิดเงิน ป้องกันการกดยืนยันซ้ำจนเกิดบิลเบิ้ล
-- สามารถสั่งพิมพ์ใบเสร็จ (Print Receipt) ได้ทันทีหลังทำรายการเสร็จ
+- รองรับการพิมพ์ใบเสร็จผ่านเครื่องพิมพ์สลิปความร้อน (Thermal Receipt Printer 58mm / 80mm) และเครื่องพิมพ์ทั่วไป
 
-### 📋 จัดการรายการเมนูสินค้า (Menu Management)
+### จัดการรายการเมนูสินค้า (Menu Management)
 - เพิ่มสินค้าใหม่, แก้ไขชื่อ, หมวดหมู่ และราคา
 - ระบบเปิด/ปิดการขายสินค้าชั่วคราว (`isActive`: Available / Unavailable)
 - **Soft Protection**: สินค้าที่เคยมีประวัติการขายแล้วจะไม่ถูกลบทำลายข้อมูล เพื่อคงความถูกต้องของบัญชีย้อนหลัง
 - **Dual-View**: แสดงผลแบบตารางบนคอมพิวเตอร์/แท็บเล็ต และปรับเป็นการ์ดสินค้ากะทัดรัดบนมือถือ
 
-### 🧾 ประวัติการขายและบิลย้อนหลัง (Sales History)
+### ประวัติการขายและบิลย้อนหลัง (Sales History)
 - แสดงรายการบิลเรียงจากใหม่สุดไปเก่าสุด รองรับระบบ Pagination
 - กรองค้นหาบิลตามช่วงวันที่ (Date Range: จากวันที่ - ถึงวันที่)
-- กดดูรายละเอียดในแต่ละบิล (ชื่อสินค้า, จำนวน, ราคาต่อหน่วย, ยอดรวม, ผู้บันทึก) พร้อมปุ่มสั่งพิมพ์ใบเสร็จ
+- กดดูรายละเอียดในแต่ละบิล (ชื่อสินค้า, จำนวน, ราคาต่อหน่วย, ยอดรวม, ผู้บันทึก) พร้อมปุ่มสั่งพิมพ์ใบเสร็จซ้ำได้ตลอดเวลา
 
-### 🔒 สิทธิ์การเข้าใช้งานเฉพาะเจ้าของร้าน (Owner Portal)
+### สิทธิ์การเข้าใช้งานเฉพาะเจ้าของร้าน (Owner Portal)
 - เข้าสู่ระบบด้วย **Google Sign-In** สะดวก ปลอดภัย ไม่ต้องจำรหัสผ่าน
 - Go Backend ตรวจสอบ Firebase ID Token จากฝั่งเซิร์ฟเวอร์
 - อนุญาตเฉพาะอีเมลที่ระบุไว้ใน `OWNER_EMAIL` เท่านั้น (ผู้ใช้ Google บัญชีอื่นจะถูกปฏิเสธด้วย HTTP 403 Forbidden ทันที)
 - **รองรับหลายอีเมล**: สามารถกำหนดอีเมลเจ้าของร้านได้มากกว่า 1 บัญชี คั่นด้วยเครื่องหมายจุลภาค (`,`)
+- ระบบต่ออายุ Token อัตโนมัติในพื้นหลัง ป้องกันการหลุดจากระบบขณะเปิดใช้งานที่เคาน์เตอร์ตลอดทั้งวัน
 - มี Modal ยืนยันก่อนออกจากระบบ (Logout Confirmation)
 
 ---
 
-## 🚀 2. วิธีเริ่มต้นใช้งานด่วน (Quick Start)
+## 2. วิธีเริ่มต้นใช้งานด่วน (Quick Start)
 
 สามารถเลือกรันได้ 2 วิธี ตามความสะดวก:
 
@@ -103,7 +105,7 @@
 
 ---
 
-## ⚙️ 3. การตั้งค่า Environment Variables
+## 3. การตั้งค่า Environment Variables
 
 ### 1. Backend (`backend/.env`)
 
@@ -116,8 +118,8 @@
 | `GOOGLE_APPLICATION_CREDENTIALS` | Path ไฟล์ Service Account Key | `./serviceAccountKey.json` |
 | `USE_MOCK_DB` | สลับโหมด Mock In-Memory (`true` / `false`) | `false` |
 
-> [!TIP]
-> **วิธีเพิ่มสิทธิ์อีเมลเจ้าของร้าน**: แก้ไขที่บรรทัด `OWNER_EMAIL` ในไฟล์ `backend/.env` โดยคั่นด้วย `,` แล้วกด Restart Go Backend ได้เลยครับ
+> [!NOTE]
+> **วิธีเพิ่มสิทธิ์อีเมลเจ้าของร้าน**: แก้ไขที่บรรทัด `OWNER_EMAIL` ในไฟล์ `backend/.env` โดยคั่นด้วย `,` แล้วกด Restart Go Backend ได้เลย
 
 ### 2. Frontend (`frontend/.env.local`)
 
@@ -132,7 +134,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 
 ---
 
-## 🏛️ 4. สถาปัตยกรรมและความปลอดภัย (Architecture & Security)
+## 4. สถาปัตยกรรมและความปลอดภัย (Architecture & Security)
 
 ```
 ┌─────────────────────────────────┐
@@ -173,7 +175,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 
 ---
 
-## 📁 5. โครงสร้างโค้ด (Project Structure)
+## 5. โครงสร้างโค้ด (Project Structure)
 
 ```
 coffee-shop-management-system/
@@ -207,7 +209,7 @@ coffee-shop-management-system/
 
 ---
 
-## 🔌 6. รายการ API (REST API Endpoints)
+## 6. รายการ API (REST API Endpoints)
 
 ทุก Endpoint (ยกเว้น `/health`) ต้องแนบ Header:  
 `Authorization: Bearer <FIREBASE_ID_TOKEN>`
@@ -227,7 +229,7 @@ coffee-shop-management-system/
 
 ---
 
-## 🧪 7. การทดสอบระบบ (Automated Tests)
+## 7. การทดสอบระบบ (Automated Tests)
 
 ### รัน Go Unit Tests (Backend)
 ทดสอบการทำงานของ Business Logic, ความแม่นยำในการคำนวณเงินแบบ Zero-Trust, การตรวจสอบสิทธิ์ และการปฏิเสธสินค้าที่ไม่พร้อมขาย:
@@ -247,7 +249,7 @@ npm run build
 
 ---
 
-## 👨‍💻 ผู้พัฒนา
-- **มหาวิทยาลัย**: โปรเจกต์วิชาระบบจัดการร้านกาแฟ (University Project)
+## ผู้พัฒนา (Developer)
+- **สถาบัน**: โปรเจกต์วิชาระบบจัดการร้านกาแฟ (University Project)
 - **GitHub**: [Tewan0](https://github.com/Tewan0)
 - **ลิขสิทธิ์**: MIT License

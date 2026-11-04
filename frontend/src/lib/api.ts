@@ -1,4 +1,5 @@
 import { APIResponse } from "@/types";
+import { auth } from "@/lib/firebase";
 
 export function getApiBaseUrl(): string {
   const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
@@ -44,8 +45,17 @@ async function request<T>(
     ...(options.headers as Record<string, string>),
   };
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+  let activeToken = token;
+  if (!activeToken && typeof window !== "undefined" && auth.currentUser) {
+    try {
+      activeToken = await auth.currentUser.getIdToken();
+    } catch {
+      // ignore
+    }
+  }
+
+  if (activeToken) {
+    headers["Authorization"] = `Bearer ${activeToken}`;
   }
 
   const controller = new AbortController();
@@ -71,6 +81,24 @@ async function request<T>(
     }));
 
     if (!res.ok || !data.success) {
+      // If 401 Unauthorized occurs (e.g. token expired after 1 hr of cashier inactivity),
+      // attempt silent background token refresh and retry once seamlessly!
+      if (res.status === 401 && typeof window !== "undefined" && auth.currentUser) {
+        try {
+          const freshToken = await auth.currentUser.getIdToken(true);
+          headers["Authorization"] = `Bearer ${freshToken}`;
+          const retryRes = await fetch(url, { ...options, headers });
+          const retryData: APIResponse<T> = await retryRes.json().catch(() => ({
+            success: false,
+          }));
+          if (retryRes.ok && retryData.success) {
+            return retryData.data as T;
+          }
+        } catch {
+          // fallback to throw error
+        }
+      }
+
       const errorMsg =
         data.error || data.message || `Request failed with status ${res.status}`;
       throw new ApiError(errorMsg, res.status);

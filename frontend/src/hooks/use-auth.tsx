@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User as FirebaseUser,
-  onAuthStateChanged,
+  onIdTokenChanged,
   signInWithPopup,
   signOut as firebaseSignOut,
 } from "firebase/auth";
@@ -65,8 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Listen to Firebase client auth state changes
-    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+    // Listen to Firebase client auth & token change events (auto-refreshes every hour in background)
+    const unsubscribe = onIdTokenChanged(auth, async (fbUser) => {
       setLoading(true);
       if (fbUser) {
         try {
@@ -74,18 +74,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setToken(idToken);
           setFirebaseUser(fbUser);
 
-          // Verify with Go backend and sync profile
-          const profile = await fetchCurrentUser(idToken);
-          setUser(profile);
+          // Verify with Go backend and sync profile if not already cached
+          setUser((currentUser) => {
+            if (!currentUser) {
+              fetchCurrentUser(idToken)
+                .then((profile) => setUser(profile))
+                .catch((err) => {
+                  console.error("Auth verification with Go backend failed:", err);
+                  setError(getFriendlyErrorMessage(err));
+                  firebaseSignOut(auth).catch(() => {});
+                  setUser(null);
+                  setToken(null);
+                  setFirebaseUser(null);
+                });
+            }
+            return currentUser;
+          });
           setError(null);
         } catch (err: any) {
-          console.error("Auth verification with Go backend failed:", err);
-          setError(getFriendlyErrorMessage(err));
-          // Reset states upon authorization failure
-          await firebaseSignOut(auth).catch(() => {});
-          setUser(null);
-          setToken(null);
-          setFirebaseUser(null);
+          console.error("Token refresh failed:", err);
         }
       } else {
         setUser(null);
