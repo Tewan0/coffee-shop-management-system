@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -30,9 +31,26 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent background scrolling when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [mobileMenuOpen]);
 
   const handleConfirmLogout = async () => {
     setLoggingOut(true);
@@ -98,18 +116,21 @@ export function Header() {
             </Link>
           )}
         </div>
+      </header>
 
-        {/* Mobile & Tablet Drawer Modal */}
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden flex">
+      {/* Mobile & Tablet Drawer Modal - Rendered via Portal directly to body to avoid backdrop-blur/sticky parent constraints */}
+      {mounted &&
+        mobileMenuOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-50 lg:hidden flex animate-in fade-in duration-200">
             {/* Clickable Backdrop to close */}
             <div
-              className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity animate-in fade-in"
+              className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity"
               onClick={() => setMobileMenuOpen(false)}
             />
 
             {/* Sliding Drawer Content */}
-            <div className="relative z-10 w-4/5 max-w-xs h-full bg-coffee-950 text-cream-50 p-5 shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-200">
+            <div className="relative z-10 w-4/5 max-w-xs h-[100dvh] bg-coffee-950 text-cream-50 p-5 shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-200">
               <div>
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-coffee-900/80">
                   <div className="flex items-center gap-2.5">
@@ -181,17 +202,20 @@ export function Header() {
                   </div>
                 </div>
                 <button
-                  onClick={() => setIsLogoutModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium text-rose-300 bg-rose-950/40 border border-rose-900/50 hover:bg-rose-950/80 transition-colors"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsLogoutModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium text-rose-300 bg-rose-950/40 border border-rose-900/50 hover:bg-rose-950/80 transition-colors active:scale-95"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="font-prompt">ออกจากระบบ</span>
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
-      </header>
 
       {/* Logout Confirmation Dialog for Mobile */}
       <Dialog
