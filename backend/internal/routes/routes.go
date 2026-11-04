@@ -22,6 +22,10 @@ func SetupRouter(cfg *config.Config, verifier middleware.TokenVerifier, h *Handl
 	r.Use(gin.Recovery())
 	r.Use(middleware.CORSMiddleware(cfg.FrontendOrigin))
 
+	// Per-client IP rate limiter: 30 requests/sec with burst limit of 60
+	rateLimiter := middleware.NewIPRateLimiter(30, 60)
+	r.Use(rateLimiter.Handler())
+
 	// Public endpoints
 	r.GET("/health", h.Health.Check)
 

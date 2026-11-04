@@ -24,16 +24,14 @@ func CORSMiddleware(allowedOrigin string) gin.HandlerFunc {
 		if origin != "" {
 			// Allow if:
 			// 1. Wildcard allowAll is true
-			// 2. Exact match in allowedMap
-			// 3. Any Vercel deployment domain (*.vercel.app)
-			// 4. Any localhost / 127.0.0.1 development port
-			isVercel := strings.HasSuffix(origin, ".vercel.app")
+			// 2. Exact match in allowedMap (configured via ALLOWED_ORIGINS)
+			// 3. Any localhost / 127.0.0.1 development port
 			isLocal := strings.HasPrefix(origin, "http://localhost:") ||
 				strings.HasPrefix(origin, "http://127.0.0.1:") ||
 				origin == "http://localhost" ||
 				origin == "http://127.0.0.1"
 
-			if allowAll || allowedMap[origin] || isVercel || isLocal {
+			if allowAll || allowedMap[origin] || isLocal {
 				c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			}
 		} else {

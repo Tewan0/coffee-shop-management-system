@@ -67,6 +67,9 @@ func (r *CreateProductRequest) Validate() error {
 	if trimmedName == "" {
 		return errors.New("product name cannot be empty")
 	}
+	if len(trimmedName) > 100 {
+		return errors.New("product name cannot exceed 100 characters")
+	}
 	if !ValidCategories[r.Category] {
 		return errors.New("invalid category: must be Coffee, Tea, Other Drinks, or Bakery")
 	}
@@ -86,6 +89,9 @@ func (r *UpdateProductRequest) Validate() error {
 	trimmedName := strings.TrimSpace(r.Name)
 	if trimmedName == "" {
 		return errors.New("product name cannot be empty")
+	}
+	if len(trimmedName) > 100 {
+		return errors.New("product name cannot exceed 100 characters")
 	}
 	if !ValidCategories[r.Category] {
 		return errors.New("invalid category: must be Coffee, Tea, Other Drinks, or Bakery")
@@ -113,6 +119,9 @@ func (r *CreateOrderRequest) Validate() error {
 	if len(r.Items) == 0 {
 		return errors.New("order must contain at least one item")
 	}
+	if len(r.Items) > 50 {
+		return errors.New("order cannot contain more than 50 different items")
+	}
 	seen := make(map[string]bool)
 	for _, it := range r.Items {
 		if strings.TrimSpace(it.ProductID) == "" {
@@ -120,6 +129,9 @@ func (r *CreateOrderRequest) Validate() error {
 		}
 		if it.Quantity <= 0 {
 			return errors.New("quantity must be a positive integer")
+		}
+		if it.Quantity > 1000 {
+			return errors.New("quantity per item cannot exceed 1,000")
 		}
 		if seen[it.ProductID] {
 			return errors.New("duplicate product in order; please combine quantities")

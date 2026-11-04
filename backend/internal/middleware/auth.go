@@ -116,10 +116,10 @@ func AuthMiddleware(verifier TokenVerifier, ownerEmail string) gin.HandlerFunc {
 			return
 		}
 
-		if len(allowedEmails) > 0 && !allowedEmails[normalizedUserEmail] {
+		if len(allowedEmails) == 0 || !allowedEmails[normalizedUserEmail] {
 			c.AbortWithStatusJSON(http.StatusForbidden, models.APIResponse{
 				Success: false,
-				Error:   "Access forbidden: this account is not authorized as the store owner",
+				Error:   "Access forbidden: store owner email is not configured or unauthorized",
 			})
 			return
 		}

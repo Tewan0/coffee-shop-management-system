@@ -122,3 +122,28 @@ func TestAuthMiddleware_MultipleOwnerEmails_Returns200(t *testing.T) {
 	}
 }
 
+func TestAuthMiddleware_EmptyOwnerEmail_Returns403(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+	verifier := &mockCustomVerifier{
+		uid:      "any-uid",
+		email:    "random-user@gmail.com",
+		name:     "Random User",
+		verified: true,
+	}
+	// Empty owner email configuration (fail-closed security)
+	r.Use(middleware.AuthMiddleware(verifier, ""))
+	r.GET("/protected", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"ok": true})
+	})
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+	req.Header.Set("Authorization", "Bearer valid-token")
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusForbidden {
+		t.Fatalf("expected 403 Forbidden when OWNER_EMAIL is empty, got: %d", w.Code)
+	}
+}
+

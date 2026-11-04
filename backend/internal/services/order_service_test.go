@@ -124,3 +124,37 @@ func TestOrderService_CreateOrder_NegativeOrZeroQuantityRejected(t *testing.T) {
 	}
 }
 
+func TestOrderService_CreateOrder_ExceedMaxItemsOrQuantityRejected(t *testing.T) {
+	ctx := context.Background()
+	pRepo := mockRepo.NewMockProductRepository()
+	oRepo := mockRepo.NewMockOrderRepository()
+	svc := services.NewOrderService(oRepo, pRepo)
+
+	// Test quantity exceeding 1,000
+	reqQuantityExceeded := &models.CreateOrderRequest{
+		Items: []models.CreateOrderItemRequest{
+			{ProductID: "prod-1", Quantity: 1001},
+		},
+	}
+	_, err := svc.CreateOrder(ctx, "test-owner-uid", reqQuantityExceeded)
+	if err == nil || !strings.Contains(err.Error(), "cannot exceed 1,000") {
+		t.Fatalf("expected error exceeding 1,000 quantity, got: %v", err)
+	}
+
+	// Test more than 50 items
+	var items []models.CreateOrderItemRequest
+	for i := 0; i < 51; i++ {
+		items = append(items, models.CreateOrderItemRequest{
+			ProductID: "prod-id-" + string(rune('a'+(i%26))) + string(rune('0'+(i%10))),
+			Quantity:  1,
+		})
+	}
+	reqItemsExceeded := &models.CreateOrderRequest{
+		Items: items,
+	}
+	_, err2 := svc.CreateOrder(ctx, "test-owner-uid", reqItemsExceeded)
+	if err2 == nil || !strings.Contains(err2.Error(), "more than 50 different items") {
+		t.Fatalf("expected error exceeding 50 items, got: %v", err2)
+	}
+}
+
