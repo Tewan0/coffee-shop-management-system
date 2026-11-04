@@ -8,6 +8,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
 BrewCraft คือเว็บแอปพลิเคชันระบบจัดการร้านกาแฟขนาดเล็ก พัฒนาด้วยสถาปัตยกรรม Monorepo โดยแบ่งหน้าที่ชัดเจน:
+
 - **Frontend**: พัฒนาด้วย **Next.js (App Router)** ทำหน้าที่แสดงผล UI แคชเชียร์และแดชบอร์ด
 - **Backend หลัก**: พัฒนาด้วยภาษา **Go (Gin Framework)** ทำหน้าที่ควบคุม Business Logic, คำนวณราคาสินค้า, ตรวจสอบความถูกต้อง, สรุปรายงาน และจัดการฐานข้อมูล
 - **Database & Auth**: ใช้ **Firebase Cloud Firestore** เป็นฐานข้อมูล และ **Firebase Authentication (Google Sign-In)** สำหรับตรวจสอบสิทธิ์เจ้าของร้าน
@@ -15,6 +16,7 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
 ---
 
 ## สารบัญ (Table of Contents)
+
 1. [ฟีเจอร์เด่นของระบบ (Key Features)](#1-ฟีเจอร์เด่นของระบบ-key-features)
 2. [วิธีเริ่มต้นใช้งานด่วน (Quick Start)](#2-วิธีเริ่มต้นใช้งานด่วน-quick-start)
 3. [การตั้งค่า Environment Variables](#3-การตั้งค่า-environment-variables)
@@ -28,6 +30,7 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
 ## 1. ฟีเจอร์เด่นของระบบ (Key Features)
 
 ### แดชบอร์ดภาพรวมร้าน (Dashboard & Analytics)
+
 - สรุปยอดขายรวมวันนี้, จำนวนบิล, และจำนวนสินค้าที่ขายได้แบบเรียลไทม์
 - แสดง **เมนูขายดีที่สุด (Best Seller)** ประจำวัน
 - **กราฟแท่งแนวโน้มยอดขายย้อนหลัง 7 วัน** (พัฒนาด้วย Recharts)
@@ -35,6 +38,7 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
 - คำนวณเวลาและตัดรอบวันอย่างแม่นยำตามเขตเวลาประเทศไทย (`Asia/Bangkok`, UTC+7)
 
 ### แคชเชียร์ขายหน้าร้าน (Point of Sale - POS)
+
 - เลือกเมนูสินค้า, ค้นหาตามชื่อ, และกรองตามหมวดหมู่ (Coffee, Tea, Other Drinks, Bakery)
 - เพิ่ม/ลดจำนวนสินค้าในตะกร้า คำนวณยอดเงินรวมอัตโนมัติ
 - รองรับการเลือกวิธีชำระเงิน (เงินสด หรือ สแกน QR Code) พร้อมระบบคำนวณเงินทอนอัตโนมัติ
@@ -46,17 +50,20 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
 - รองรับการพิมพ์ใบเสร็จผ่านเครื่องพิมพ์สลิปความร้อน (Thermal Receipt Printer 58mm / 80mm) และเครื่องพิมพ์ทั่วไป
 
 ### จัดการรายการเมนูสินค้า (Menu Management)
+
 - เพิ่มสินค้าใหม่, แก้ไขชื่อ, หมวดหมู่ และราคา
 - ระบบเปิด/ปิดการขายสินค้าชั่วคราว (`isActive`: Available / Unavailable)
 - **Soft Protection**: สินค้าที่เคยมีประวัติการขายแล้วจะไม่ถูกลบทำลายข้อมูล เพื่อคงความถูกต้องของบัญชีย้อนหลัง
 - **Dual-View**: แสดงผลแบบตารางบนคอมพิวเตอร์/แท็บเล็ต และปรับเป็นการ์ดสินค้ากะทัดรัดบนมือถือ
 
 ### ประวัติการขายและบิลย้อนหลัง (Sales History)
+
 - แสดงรายการบิลเรียงจากใหม่สุดไปเก่าสุด รองรับระบบ Pagination
 - กรองค้นหาบิลตามช่วงวันที่ (Date Range: จากวันที่ - ถึงวันที่)
 - กดดูรายละเอียดในแต่ละบิล (ชื่อสินค้า, จำนวน, ราคาต่อหน่วย, ยอดรวม, ผู้บันทึก) พร้อมปุ่มสั่งพิมพ์ใบเสร็จซ้ำได้ตลอดเวลา
 
 ### สิทธิ์การเข้าใช้งานเฉพาะเจ้าของร้าน (Owner Portal)
+
 - เข้าสู่ระบบด้วย **Google Sign-In** สะดวก ปลอดภัย ไม่ต้องจำรหัสผ่าน
 - Go Backend ตรวจสอบ Firebase ID Token จากฝั่งเซิร์ฟเวอร์
 - อนุญาตเฉพาะอีเมลที่ระบุไว้ใน `OWNER_EMAIL` เท่านั้น (ผู้ใช้ Google บัญชีอื่นจะถูกปฏิเสธด้วย HTTP 403 Forbidden ทันที)
@@ -71,14 +78,17 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
 สามารถเลือกรันได้ 2 วิธี ตามความสะดวก:
 
 ### ทางเลือกที่ 1: รันด่วนแบบ In-Memory Mock (ไม่ต้องใช้ Firebase ก็เปิดดูระบบได้ทันที)
+
 ในโหมดนี้ Go Backend จะใช้ฐานข้อมูลจำลองในแรม พร้อมโหลดเมนูตัวอย่าง 12 รายการให้ทันที เหมาะสำหรับเปิดดู UI หรือทดสอบฟังก์ชัน:
 
 1. **รัน Go Backend**:
+
    ```powershell
    cd backend
    go run ./cmd/server/main.go
    ```
-   *(เซิร์ฟเวอร์จะเปิดที่ `http://localhost:8080`)*
+
+   _(เซิร์ฟเวอร์จะเปิดที่ `http://localhost:8080`)_
 
 2. **รัน Next.js Frontend** (เปิด Terminal ใหม่):
    ```powershell
@@ -86,7 +96,7 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
    npm install
    npm run dev
    ```
-   *(เปิดบราวเซอร์ไปที่ `http://localhost:3000`)*
+   _(เปิดบราวเซอร์ไปที่ `http://localhost:3000`)_
 
 ---
 
@@ -109,14 +119,14 @@ BrewCraft คือเว็บแอปพลิเคชันระบบจ�
 
 ### 1. Backend (`backend/.env`)
 
-| Key | คำอธิบาย | ตัวอย่างค่า |
-|---|---|---|
-| `PORT` | พอร์ตสำหรับรัน Go REST API | `8080` |
-| `FRONTEND_ORIGIN` | URL ของ Frontend สำหรับอนุญาต CORS | `http://localhost:3000` |
-| `OWNER_EMAIL` | **อีเมล Google ของเจ้าของร้าน** (ใส่ได้หลายอีเมลคั่นด้วย `,`) | `owner1@gmail.com, owner2@gmail.com` |
-| `FIREBASE_PROJECT_ID` | Project ID บน Firebase | `coffee-shop-system-90a60` |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Path ไฟล์ Service Account Key | `./serviceAccountKey.json` |
-| `USE_MOCK_DB` | สลับโหมด Mock In-Memory (`true` / `false`) | `false` |
+| Key                              | คำอธิบาย                                                      | ตัวอย่างค่า                          |
+| -------------------------------- | ------------------------------------------------------------- | ------------------------------------ |
+| `PORT`                           | พอร์ตสำหรับรัน Go REST API                                    | `8080`                               |
+| `FRONTEND_ORIGIN`                | URL ของ Frontend สำหรับอนุญาต CORS                            | `http://localhost:3000`              |
+| `OWNER_EMAIL`                    | **อีเมล Google ของเจ้าของร้าน** (ใส่ได้หลายอีเมลคั่นด้วย `,`) | `owner1@gmail.com, owner2@gmail.com` |
+| `FIREBASE_PROJECT_ID`            | Project ID บน Firebase                                        | `coffee-shop-system-90a60`           |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path ไฟล์ Service Account Key                                 | `./serviceAccountKey.json`           |
+| `USE_MOCK_DB`                    | สลับโหมด Mock In-Memory (`true` / `false`)                    | `false`                              |
 
 > [!NOTE]
 > **วิธีเพิ่มสิทธิ์อีเมลเจ้าของร้าน**: แก้ไขที่บรรทัด `OWNER_EMAIL` ในไฟล์ `backend/.env` โดยคั่นด้วย `,` แล้วกด Restart Go Backend ได้เลย
@@ -169,6 +179,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
 ### มาตรการความปลอดภัยสำคัญ:
+
 1. **Zero-Trust Pricing Architecture**: Frontend ส่งมาเฉพาะ `productId` และ `quantity` เท่านั้น ตัว Go Backend จะนำรหัสสินค้าไปดึงข้อมูลจริงจากฐานข้อมูล ตรวจสอบว่าสินค้ายังเปิดขายอยู่หรือไม่ (`isActive == true`) แล้วคำนวณราคาสุทธิเอง ป้องกันการดัดแปลงราคาจากหน้าเว็บ 100%
 2. **Satang-Precision Currency**: ทุกจำนวนเงินจัดเก็บและประมวลผลเป็น **จำนวนเต็มสตางค์ (Integer Satang)** เช่น 65.00 บาท = `6500` สตางค์ เพื่อแก้ปัญหาความคลาดเคลื่อนของทศนิยม (Floating-point error)
 3. **Sole Authority Backend**: Cloud Firestore ปิดกั้นการอ่าน/เขียนจาก Client Browser โดยตรงผ่าน Security Rules (`allow read, write: if false;`) ทุกคำขอต้องวิ่งผ่าน Go Backend ที่ถือ Service Account Key เท่านั้น
@@ -214,42 +225,47 @@ coffee-shop-management-system/
 ทุก Endpoint (ยกเว้น `/health`) ต้องแนบ Header:  
 `Authorization: Bearer <FIREBASE_ID_TOKEN>`
 
-| Method | Endpoint | สิทธิ์ | คำอธิบาย |
-|---|---|:---:|---|
-| `GET` | `/health` | สาธารณะ | ตรวจสอบสถานะการทำงานของ Go Server |
-| `GET` | `/api/v1/auth/me` | Owner | ตรวจสอบสิทธิ์และซิงค์โปรไฟล์เจ้าของร้าน |
-| `GET` | `/api/v1/products` | Owner | ดึงรายการสินค้าทั้งหมด (รองรับ Filter & Search) |
-| `POST` | `/api/v1/products` | Owner | เพิ่มเมนูสินค้าใหม่ |
-| `PUT` | `/api/v1/products/:id` | Owner | แก้ไขชื่อ, หมวดหมู่ และราคา |
-| `PATCH` | `/api/v1/products/:id/status` | Owner | สลับสถานะเปิดขาย/ปิดการขายชั่วคราว |
-| `POST` | `/api/v1/orders` | Owner | บันทึกการขาย (คำนวณราคาสุทธิจากฐานข้อมูล) |
-| `GET` | `/api/v1/orders` | Owner | ดึงประวัติการขาย (รองรับ Pagination และช่วงวันที่) |
-| `GET` | `/api/v1/orders/:id` | Owner | ดูรายละเอียดสินค้าและยอดเงินในบิลนั้นๆ |
-| `GET` | `/api/v1/dashboard/summary` | Owner | ดึงสรุปยอดขายวันนี้, สินค้าขายดี, ยอด 7 วันย้อนหลัง |
+| Method  | Endpoint                      | สิทธิ์  | คำอธิบาย                                            |
+| ------- | ----------------------------- | :-----: | --------------------------------------------------- |
+| `GET`   | `/health`                     | สาธารณะ | ตรวจสอบสถานะการทำงานของ Go Server                   |
+| `GET`   | `/api/v1/auth/me`             |  Owner  | ตรวจสอบสิทธิ์และซิงค์โปรไฟล์เจ้าของร้าน             |
+| `GET`   | `/api/v1/products`            |  Owner  | ดึงรายการสินค้าทั้งหมด (รองรับ Filter & Search)     |
+| `POST`  | `/api/v1/products`            |  Owner  | เพิ่มเมนูสินค้าใหม่                                 |
+| `PUT`   | `/api/v1/products/:id`        |  Owner  | แก้ไขชื่อ, หมวดหมู่ และราคา                         |
+| `PATCH` | `/api/v1/products/:id/status` |  Owner  | สลับสถานะเปิดขาย/ปิดการขายชั่วคราว                  |
+| `POST`  | `/api/v1/orders`              |  Owner  | บันทึกการขาย (คำนวณราคาสุทธิจากฐานข้อมูล)           |
+| `GET`   | `/api/v1/orders`              |  Owner  | ดึงประวัติการขาย (รองรับ Pagination และช่วงวันที่)  |
+| `GET`   | `/api/v1/orders/:id`          |  Owner  | ดูรายละเอียดสินค้าและยอดเงินในบิลนั้นๆ              |
+| `GET`   | `/api/v1/dashboard/summary`   |  Owner  | ดึงสรุปยอดขายวันนี้, สินค้าขายดี, ยอด 7 วันย้อนหลัง |
 
 ---
 
 ## 7. การทดสอบระบบ (Automated Tests)
 
 ### รัน Go Unit Tests (Backend)
+
 ทดสอบการทำงานของ Business Logic, ความแม่นยำในการคำนวณเงินแบบ Zero-Trust, การตรวจสอบสิทธิ์ และการปฏิเสธสินค้าที่ไม่พร้อมขาย:
+
 ```powershell
 cd backend
 go test -v ./...
 ```
+
 **ผลการทดสอบ**: ผ่าน 100% (Pass ทุกกรณีทดสอบ)
 
 ### รัน Production Build (Frontend)
+
 ตรวจสอบความสมบูรณ์ของ TypeScript และคอมไพล์หน้าเพจทั้งหมด:
+
 ```powershell
 cd frontend
 npm run build
 ```
+
 **ผลการทดสอบ**: คอมไพล์ Static Page ผ่านสมบูรณ์ ไร้ข้อผิดพลาด
 
 ---
 
 ## ผู้พัฒนา (Developer)
-- **สถาบัน**: โปรเจกต์วิชาระบบจัดการร้านกาแฟ (University Project)
+
 - **GitHub**: [Tewan0](https://github.com/Tewan0)
-- **ลิขสิทธิ์**: MIT License
