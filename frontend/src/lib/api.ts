@@ -1,17 +1,26 @@
 import { APIResponse } from "@/types";
 
 export function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+  // 1. If configured with a production URL (e.g. Render, Railway, Cloud Run), always use it
+  if (envUrl && !envUrl.includes("localhost") && !envUrl.includes("127.0.0.1")) {
+    return envUrl;
+  }
+
+  // 2. If running locally and accessed from mobile/iPad via LAN IP (e.g., 192.168.x.x, 10.x.x.x)
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    // If accessed from mobile/iPad via LAN IP (e.g., 192.168.1.x), connect to the same machine's Go port 8080
-    if (hostname && hostname !== "localhost" && hostname !== "127.0.0.1") {
+    const isLocalLan =
+      hostname.startsWith("192.168.") ||
+      hostname.startsWith("10.") ||
+      hostname.startsWith("172.") ||
+      hostname.endsWith(".local");
+    if (isLocalLan) {
       return `http://${hostname}:8080`;
     }
   }
-  return (
-    process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ||
-    "http://localhost:8080"
-  );
+
+  return envUrl || "http://localhost:8080";
 }
 
 export class ApiError extends Error {
