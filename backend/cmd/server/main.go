@@ -51,7 +51,9 @@ func main() {
 		log.Println("==================================================================")
 
 		var opts []option.ClientOption
-		if cfg.GoogleApplicationCredentials != "" {
+		if cfg.FirebaseCredentialsJSON != "" {
+			opts = append(opts, option.WithCredentialsJSON([]byte(cfg.FirebaseCredentialsJSON)))
+		} else if cfg.GoogleApplicationCredentials != "" {
 			if _, err := os.Stat(cfg.GoogleApplicationCredentials); os.IsNotExist(err) {
 				log.Fatalf("[FATAL] Service account credentials file not found at: %s. Please check GOOGLE_APPLICATION_CREDENTIALS or set USE_MOCK_DB=true.", cfg.GoogleApplicationCredentials)
 			}
@@ -73,7 +75,7 @@ func main() {
 		}
 
 		var fsClient *firestore.Client
-		if cfg.GoogleApplicationCredentials != "" {
+		if cfg.FirebaseCredentialsJSON != "" || cfg.GoogleApplicationCredentials != "" {
 			fsClient, err = app.Firestore(ctx)
 		} else {
 			fsClient, err = firestore.NewClient(ctx, cfg.FirebaseProjectID, opts...)

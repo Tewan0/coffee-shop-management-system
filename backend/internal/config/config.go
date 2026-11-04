@@ -12,6 +12,7 @@ type Config struct {
 	Port                         string
 	FirebaseProjectID            string
 	GoogleApplicationCredentials string
+	FirebaseCredentialsJSON      string // Allow passing full service account JSON via env var
 	OwnerEmail                   string
 	FrontendOrigin               string
 	UseMockDB                    bool // When true or when credentials are missing, falls back to in-memory mock for dev/testing
@@ -38,10 +39,14 @@ func LoadConfig() *Config {
 
 	useMock := os.Getenv("USE_MOCK_DB") == "true"
 	creds := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+	credsJSON := os.Getenv("FIREBASE_CREDENTIALS_JSON")
+	if credsJSON == "" {
+		credsJSON = os.Getenv("SERVICE_ACCOUNT_JSON")
+	}
 	projectID := os.Getenv("FIREBASE_PROJECT_ID")
 
-	// Check credentials file on disk
-	if creds != "" && !useMock {
+	// Check credentials file on disk if JSON is not provided directly in env
+	if credsJSON == "" && creds != "" && !useMock {
 		if _, err := os.Stat(creds); os.IsNotExist(err) {
 			if _, err2 := os.Stat(creds + ".json"); err2 == nil {
 				log.Printf("[INFO] Detected '%s.json', using it for credentials.", creds)
@@ -53,8 +58,8 @@ func LoadConfig() *Config {
 		}
 	}
 
-	if creds == "" && projectID == "" && !useMock {
-		log.Println("[INFO] Neither GOOGLE_APPLICATION_CREDENTIALS nor FIREBASE_PROJECT_ID is set. Defaulting to in-memory mock database mode.")
+	if credsJSON == "" && creds == "" && projectID == "" && !useMock {
+		log.Println("[INFO] Neither credentials nor FIREBASE_PROJECT_ID is set. Defaulting to in-memory mock database mode.")
 		useMock = true
 	}
 
@@ -62,6 +67,7 @@ func LoadConfig() *Config {
 		Port:                         port,
 		FirebaseProjectID:            projectID,
 		GoogleApplicationCredentials: creds,
+		FirebaseCredentialsJSON:      credsJSON,
 		OwnerEmail:                   ownerEmail,
 		FrontendOrigin:               frontendOrigin,
 		UseMockDB:                    useMock,
