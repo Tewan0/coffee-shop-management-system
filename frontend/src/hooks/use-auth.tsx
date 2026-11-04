@@ -48,7 +48,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return "โดเมนนี้ยังไม่ได้รับอนุญาตใน Firebase Authentication (ไปที่ Firebase Console -> Authentication -> Settings -> Authorized domains)";
     }
     if (err?.message?.includes("Failed to fetch") || err?.message?.includes("NetworkError")) {
-      return "ไม่สามารถเชื่อมต่อกับ Go Backend ได้ (กรุณาตรวจสอบว่ารัน 'go run ./cmd/server/main.go' ที่พอร์ต 8080 อยู่หรือไม่)";
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+      if (isLocal) {
+        return "ไม่สามารถเชื่อมต่อกับ Go Backend ได้ (กรุณาเปิด Terminal แล้วรัน 'cd backend' และคำสั่ง 'go run ./cmd/server/main.go' ที่พอร์ต 8080)";
+      }
+      return "ไม่สามารถเชื่อมต่อกับ Go Backend บนคลาวด์ได้ (กรุณาตรวจสอบว่า Go Backend บน Render กำลังทำงานอยู่ และตั้งค่า NEXT_PUBLIC_API_BASE_URL บน Vercel ถูกต้อง)";
     }
     return err?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ";
   };
