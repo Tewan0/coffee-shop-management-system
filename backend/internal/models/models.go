@@ -76,6 +76,9 @@ func (r *CreateProductRequest) Validate() error {
 	if r.PriceSatang < 0 {
 		return errors.New("price in satang cannot be negative")
 	}
+	if r.PriceSatang > 10000000 {
+		return errors.New("price in satang cannot exceed 10,000,000 (100,000 THB)")
+	}
 	return nil
 }
 
@@ -98,6 +101,9 @@ func (r *UpdateProductRequest) Validate() error {
 	}
 	if r.PriceSatang < 0 {
 		return errors.New("price in satang cannot be negative")
+	}
+	if r.PriceSatang > 10000000 {
+		return errors.New("price in satang cannot exceed 10,000,000 (100,000 THB)")
 	}
 	return nil
 }

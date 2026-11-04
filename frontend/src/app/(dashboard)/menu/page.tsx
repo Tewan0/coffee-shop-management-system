@@ -103,12 +103,17 @@ export default function MenuManagementPage() {
 
   const validateForm = () => {
     const errors: { name?: string; price?: string } = {};
-    if (!formData.name.trim()) {
+    const trimmedName = formData.name.trim();
+    if (!trimmedName) {
       errors.name = "กรุณากรอกชื่อเมนูสินค้า";
+    } else if (trimmedName.length > 100) {
+      errors.name = "ชื่อเมนูสินค้าต้องไม่เกิน 100 ตัวอักษร";
     }
     const priceNum = parseFloat(formData.priceBaht);
     if (isNaN(priceNum) || priceNum < 0) {
       errors.price = "กรุณากรอกราคาที่ถูกต้อง (ตั้งแต่ 0 บาทขึ้นไป)";
+    } else if (priceNum > 100000) {
+      errors.price = "ราคาขายต้องไม่เกิน 100,000 บาท";
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -450,6 +455,7 @@ export default function MenuManagementPage() {
             <Input
               placeholder="เช่น Espresso, Matcha Latte, Croissant"
               value={formData.name}
+              maxLength={100}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, name: e.target.value }))
               }

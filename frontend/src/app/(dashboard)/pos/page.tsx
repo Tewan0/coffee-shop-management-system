@@ -90,11 +90,27 @@ export default function PosPage() {
     setCart((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
+        if (existing.quantity >= 1000) {
+          toast({
+            title: "จำกัดจำนวน",
+            description: "สั่งได้สูงสุดไม่เกิน 1,000 ชิ้นต่อรายการ",
+            type: "error",
+          });
+          return prev;
+        }
         return prev.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
+      }
+      if (prev.length >= 50) {
+        toast({
+          title: "จำกัดรายการสินค้า",
+          description: "สั่งซื้อได้สูงสุดไม่เกิน 50 รายการสินค้าต่อบิล",
+          type: "error",
+        });
+        return prev;
       }
       return [...prev, { product, quantity: 1 }];
     });
@@ -106,6 +122,14 @@ export default function PosPage() {
         .map((item) => {
           if (item.product.id === productId) {
             const nextQty = item.quantity + delta;
+            if (nextQty > 1000) {
+              toast({
+                title: "จำกัดจำนวน",
+                description: "สั่งได้สูงสุดไม่เกิน 1,000 ชิ้นต่อรายการ",
+                type: "error",
+              });
+              return item;
+            }
             return nextQty > 0 ? { ...item, quantity: nextQty } : null;
           }
           return item;
