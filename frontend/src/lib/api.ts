@@ -49,7 +49,12 @@ async function request<T>(
   }
 
   const controller = new AbortController();
-  const timeoutMs = 8000; // 8 seconds safety timeout
+  // Cloud free tiers (e.g. Render) spin down on inactivity and can take 25-45s to wake up on the first request
+  const isProduction =
+    typeof window !== "undefined" &&
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1";
+  const timeoutMs = isProduction ? 45000 : 15000;
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {

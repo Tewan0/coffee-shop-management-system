@@ -8,7 +8,7 @@ import {
   signOut as firebaseSignOut,
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
-import { fetchCurrentUser, ApiError } from "@/lib/api";
+import { fetchCurrentUser, ApiError, getApiBaseUrl } from "@/lib/api";
 import { UserProfile } from "@/types";
 
 interface AuthContextType {
@@ -55,7 +55,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (isLocal) {
         return "ไม่สามารถเชื่อมต่อกับ Go Backend ได้ (กรุณาเปิด Terminal แล้วรัน 'cd backend' และคำสั่ง 'go run ./cmd/server/main.go' ที่พอร์ต 8080)";
       }
-      return "ไม่สามารถเชื่อมต่อกับ Go Backend บนคลาวด์ได้ (กรุณาตรวจสอบว่า Go Backend บน Render กำลังทำงานอยู่ และตั้งค่า NEXT_PUBLIC_API_BASE_URL บน Vercel ถูกต้อง)";
+      const currentApiUrl = getApiBaseUrl();
+      if (currentApiUrl.includes("localhost")) {
+        return `ยังไม่ได้ตั้งค่า NEXT_PUBLIC_API_BASE_URL บน Vercel ให้ชี้ไปที่ Go Backend (ปัจจุบันชี้ไปที่ ${currentApiUrl}) หรือตั้งแล้วแต่ยังไม่ได้กด Redeploy`;
+      }
+      return `ไม่สามารถเชื่อมต่อกับ Go Backend ที่ ${currentApiUrl} ได้ (หากใช้ Render Free tier โปรดรอสักครู่เนื่องจากเซิร์ฟเวอร์กำลังตื่น หรือตรวจสอบว่าสถานะบน Render ขึ้น Live แล้ว)`;
     }
     return err?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ";
   };
