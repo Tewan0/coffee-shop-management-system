@@ -359,7 +359,7 @@ export default function MenuManagementPage() {
                   <div
                     key={p.id}
                     className={cn(
-                      "p-4 transition-colors space-y-3",
+                      "p-4 transition-all duration-200 space-y-3 hover:shadow-sm",
                       p.isActive ? "bg-white hover:bg-cream-50/50" : "bg-stone-50/80 opacity-75"
                     )}
                   >

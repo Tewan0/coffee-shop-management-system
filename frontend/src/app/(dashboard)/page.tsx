@@ -114,7 +114,7 @@ export default function DashboardPage() {
       {/* Key Metric Cards (2 columns on mobile/tablet, 4 on desktop) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {/* Metric 1: Today's Revenue */}
-        <Card className="border-coffee-200/80 hover:shadow-md transition-shadow">
+        <Card className="border-coffee-200/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-5 pb-1 sm:pb-2">
             <CardTitle className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-coffee-600 font-prompt truncate">
               ยอดขายวันนี้
@@ -138,7 +138,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Metric 2: Today's Bills */}
-        <Card className="border-coffee-200/80 hover:shadow-md transition-shadow">
+        <Card className="border-coffee-200/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-5 pb-1 sm:pb-2">
             <CardTitle className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-coffee-600 font-prompt truncate">
               จำนวนบิล
@@ -163,7 +163,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Metric 3: Today's Items Sold */}
-        <Card className="border-coffee-200/80 hover:shadow-md transition-shadow">
+        <Card className="border-coffee-200/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-5 pb-1 sm:pb-2">
             <CardTitle className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-coffee-600 font-prompt truncate">
               จำนวนสินค้าขาย
@@ -188,7 +188,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Metric 4: Best Seller */}
-        <Card className="border-coffee-200/80 hover:shadow-md transition-shadow">
+        <Card className="border-coffee-200/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-5 pb-1 sm:pb-2">
             <CardTitle className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-coffee-600 font-prompt truncate">
               เมนูขายดีสุด
@@ -274,6 +274,8 @@ export default function DashboardPage() {
                     fill="#a87444"
                     radius={[6, 6, 0, 0]}
                     maxBarSize={40}
+                    isAnimationActive={true}
+                    animationDuration={800}
                   />
                 </BarChart>
               </ResponsiveContainer>

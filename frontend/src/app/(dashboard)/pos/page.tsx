@@ -16,17 +16,20 @@ import {
   Printer,
   ArrowLeft,
   ArrowRight,
+  Banknote,
+  QrCode,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { fetchProducts, createOrder } from "@/lib/api";
 import { Product, CartItem, ProductCategory, PRODUCT_CATEGORIES, Order } from "@/types";
-import { formatCurrency, cn } from "@/lib/utils";
+import { formatCurrency, satangToBaht, bahtToSatang, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThermalReceipt } from "@/components/receipt/thermal-receipt";
 
 export default function PosPage() {
   const { token } = useAuth();
@@ -48,6 +51,14 @@ export default function PosPage() {
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [lastPlacedOrder, setLastPlacedOrder] = useState<Order | null>(null);
+
+  // Payment method & cash change calculator
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "qr">("cash");
+  const [cashReceivedBaht, setCashReceivedBaht] = useState<string>("");
+  const [lastPaymentInfo, setLastPaymentInfo] = useState<{
+    cashReceivedSatang?: number;
+    changeSatang?: number;
+  }>({});
 
   const loadProducts = async () => {
     if (!token) return;
@@ -131,11 +142,25 @@ export default function PosPage() {
         })),
       };
 
+      const parsedCash = parseFloat(cashReceivedBaht) || 0;
+      const cashSatang =
+        paymentMethod === "cash" && parsedCash > 0
+          ? bahtToSatang(parsedCash)
+          : undefined;
+      const changeSatang =
+        cashSatang !== undefined ? Math.max(0, cashSatang - totalSatang) : undefined;
+
+      setLastPaymentInfo({
+        cashReceivedSatang: cashSatang,
+        changeSatang,
+      });
+
       const order = await createOrder(payload, token);
       setLastPlacedOrder(order);
       setIsConfirmOpen(false);
       setIsSuccessModalOpen(true);
       clearCart();
+      setCashReceivedBaht("");
       setMobileTab("catalog"); // switch back to catalog on mobile
 
       toast({
@@ -270,14 +295,14 @@ export default function PosPage() {
                       key={p.id}
                       onClick={() => addToCart(p)}
                       className={cn(
-                        "flex flex-col justify-between p-3 sm:p-4 rounded-2xl text-left border transition-all duration-150 group relative hover:shadow-md active:scale-95",
+                        "flex flex-col justify-between p-3 sm:p-4 rounded-2xl text-left border transition-all duration-200 group relative hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer",
                         inCart
                           ? "bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/40"
                           : "bg-cream-50/60 hover:bg-cream-100/70 border-coffee-200/70"
                       )}
                     >
                       {inCart && (
-                        <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-coffee-800 text-[10px] font-bold text-cream-100 shadow-sm">
+                        <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-coffee-800 text-[10px] font-bold text-cream-100 shadow-sm animate-in zoom-in-75 duration-150">
                           {inCart.quantity}
                         </span>
                       )}
@@ -293,7 +318,7 @@ export default function PosPage() {
                         <span className="font-bold text-coffee-900 text-xs sm:text-base font-prompt">
                           {formatCurrency(p.priceSatang)}
                         </span>
-                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-coffee-700 group-hover:bg-coffee-800 text-cream-50 flex items-center justify-center shadow-sm">
+                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-coffee-700 group-hover:bg-coffee-800 text-cream-50 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                           <Plus className="w-3.5 h-3.5" />
                         </div>
                       </div>
@@ -467,27 +492,131 @@ export default function PosPage() {
         open={isConfirmOpen}
         onOpenChange={setIsConfirmOpen}
         title="ยืนยันการบันทึกการขาย"
-        description="กรุณาตรวจสอบรายการสินค้าและยอดชำระเงินก่อนยืนยัน"
+        description="กรุณาเลือกวิธีชำระเงินและตรวจสอบรายการสินค้าก่อนยืนยัน"
       >
         <div className="space-y-4">
-          <div className="rounded-2xl bg-cream-50 p-4 border border-coffee-200 max-h-60 overflow-y-auto space-y-2">
+          {/* Cart Item Summary */}
+          <div className="rounded-2xl bg-cream-50 p-3.5 border border-coffee-200 max-h-48 overflow-y-auto space-y-2">
             {cart.map((item) => (
               <div
                 key={item.product.id}
-                className="flex justify-between text-xs sm:text-sm text-coffee-900 border-b border-coffee-100/80 pb-1.5 last:border-0 last:pb-0"
+                className="flex justify-between text-xs text-coffee-900 border-b border-coffee-100/80 pb-1.5 last:border-0 last:pb-0"
               >
-                <span>
+                <span className="font-medium font-prompt truncate pr-2">
                   {item.product.name} x {item.quantity}
                 </span>
-                <span className="font-semibold text-coffee-950 font-prompt">
+                <span className="font-semibold text-coffee-950 font-prompt flex-shrink-0">
                   {formatCurrency(item.product.priceSatang * item.quantity)}
                 </span>
               </div>
             ))}
           </div>
 
+          {/* Payment Method Selector */}
+          <div className="space-y-2.5">
+            <label className="text-xs font-semibold text-coffee-800 font-prompt">
+              วิธีการชำระเงิน:
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("cash")}
+                className={cn(
+                  "flex-1 p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all font-prompt",
+                  paymentMethod === "cash"
+                    ? "bg-coffee-800 text-cream-50 border-coffee-800 shadow-sm"
+                    : "bg-cream-50 text-coffee-700 border-coffee-200 hover:bg-cream-100"
+                )}
+              >
+                <Banknote className="w-4 h-4" />
+                <span>เงินสด (Cash)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("qr")}
+                className={cn(
+                  "flex-1 p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all font-prompt",
+                  paymentMethod === "qr"
+                    ? "bg-coffee-800 text-cream-50 border-coffee-800 shadow-sm"
+                    : "bg-cream-50 text-coffee-700 border-coffee-200 hover:bg-cream-100"
+                )}
+              >
+                <QrCode className="w-4 h-4" />
+                <span>สแกน QR Code</span>
+              </button>
+            </div>
+
+            {/* Cash Calculator */}
+            {paymentMethod === "cash" && (
+              <div className="p-3.5 rounded-xl bg-stone-50 border border-coffee-200 space-y-2.5 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-coffee-800 font-prompt">
+                    รับเงินสดมา (บาท):
+                  </label>
+                  <input
+                    type="number"
+                    placeholder={satangToBaht(totalSatang).toString()}
+                    value={cashReceivedBaht}
+                    onChange={(e) => setCashReceivedBaht(e.target.value)}
+                    className="w-32 text-right px-2.5 py-1 text-sm font-bold border border-coffee-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-500 bg-white text-coffee-950"
+                  />
+                </div>
+
+                {/* Quick Cash Buttons */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setCashReceivedBaht(satangToBaht(totalSatang).toString())}
+                    className="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300/80 transition-colors font-prompt"
+                  >
+                    พอดี (฿{satangToBaht(totalSatang)})
+                  </button>
+                  {[100, 500, 1000].map((amt) => {
+                    if (amt < satangToBaht(totalSatang)) return null;
+                    return (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setCashReceivedBaht(amt.toString())}
+                        className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-white hover:bg-cream-100 text-coffee-800 border border-coffee-200 transition-colors"
+                      >
+                        ฿{amt}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Change calculation display */}
+                {parseFloat(cashReceivedBaht) > 0 && (
+                  <div className="flex justify-between items-center pt-2 border-t border-coffee-200/80 text-xs font-bold font-prompt">
+                    <span className="text-coffee-700">เงินทอน (Change):</span>
+                    <span
+                      className={cn(
+                        "text-sm font-prompt",
+                        parseFloat(cashReceivedBaht) >= satangToBaht(totalSatang)
+                          ? "text-emerald-700"
+                          : "text-rose-600"
+                      )}
+                    >
+                      {parseFloat(cashReceivedBaht) >= satangToBaht(totalSatang)
+                        ? formatCurrency(bahtToSatang(parseFloat(cashReceivedBaht)) - totalSatang)
+                        : "เงินที่รับมายังไม่ครบ"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {paymentMethod === "qr" && (
+              <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 flex items-center gap-2 animate-in fade-in duration-150">
+                <QrCode className="w-5 h-5 text-amber-700 flex-shrink-0" />
+                <p>ให้ลูกค้ายิงสแกน QR / PromptPay หลังได้รับยอดโอนแล้วกดยืนยัน</p>
+              </div>
+            )}
+          </div>
+
           <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-coffee-950 flex justify-between items-center text-sm font-bold">
-            <span>ยอดชำระรวมทั้งสิ้น:</span>
+            <span className="font-prompt">ยอดชำระรวมทั้งสิ้น:</span>
             <span className="text-lg text-amber-900 font-prompt">
               {formatCurrency(totalSatang)}
             </span>
@@ -504,8 +633,13 @@ export default function PosPage() {
             <Button
               onClick={handleCheckout}
               isLoading={submittingOrder}
-              disabled={submittingOrder}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-prompt font-semibold"
+              disabled={
+                submittingOrder ||
+                (paymentMethod === "cash" &&
+                  parseFloat(cashReceivedBaht) > 0 &&
+                  parseFloat(cashReceivedBaht) < satangToBaht(totalSatang))
+              }
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-prompt font-semibold active:scale-95 transition-all"
             >
               ยืนยันการรับชำระเงิน
             </Button>
@@ -513,7 +647,7 @@ export default function PosPage() {
         </div>
       </Dialog>
 
-      {/* Order Success & Print Modal */}
+      {/* Order Success & Thermal Print Modal */}
       <Dialog
         open={isSuccessModalOpen}
         onOpenChange={setIsSuccessModalOpen}
@@ -522,27 +656,25 @@ export default function PosPage() {
       >
         {lastPlacedOrder && (
           <div className="space-y-4">
-            <div className="text-center py-3">
-              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+            <div className="text-center py-2 animate-in zoom-in-75 duration-300">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 ring-8 ring-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <p className="text-xl font-bold text-coffee-950 font-prompt">
-                {formatCurrency(lastPlacedOrder.totalSatang)}
+              <p className="text-lg font-bold text-coffee-950 font-prompt">
+                รับชำระเงินสำเร็จเรียบร้อย!
               </p>
-              <p className="text-xs text-coffee-500 mt-0.5">
-                ชำระเงินเรียบร้อย • สินค้าทั้งหมด {lastPlacedOrder.totalQuantity} ชิ้น
+              <p className="text-xs text-coffee-500">
+                ยอดสุทธิ {formatCurrency(lastPlacedOrder.totalSatang)} • สินค้าทั้งหมด {lastPlacedOrder.totalQuantity} ชิ้น
               </p>
             </div>
 
-            <div className="border border-coffee-200 rounded-xl p-3 bg-cream-50 text-xs space-y-1.5 max-h-48 overflow-y-auto">
-              {lastPlacedOrder.items.map((it, idx) => (
-                <div key={idx} className="flex justify-between text-coffee-800">
-                  <span>{it.productName} x {it.quantity}</span>
-                  <span className="font-semibold text-coffee-950 font-prompt">
-                    {formatCurrency(it.subtotalSatang)}
-                  </span>
-                </div>
-              ))}
+            {/* Thermal Receipt Preview */}
+            <div className="max-h-72 overflow-y-auto rounded-xl p-1 bg-stone-100/60 border border-coffee-200">
+              <ThermalReceipt
+                order={lastPlacedOrder}
+                cashReceivedSatang={lastPaymentInfo.cashReceivedSatang}
+                changeSatang={lastPaymentInfo.changeSatang}
+              />
             </div>
 
             <div className="flex items-center justify-between gap-3 pt-3 border-t border-coffee-100">
@@ -550,10 +682,10 @@ export default function PosPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => window.print()}
-                className="flex items-center gap-1.5 text-xs text-coffee-800 border-coffee-300"
+                className="flex items-center gap-1.5 text-xs text-coffee-800 border-coffee-300 hover:bg-cream-100"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>พิมพ์ใบเสร็จ</span>
+                <span>พิมพ์ใบเสร็จ (Thermal Print)</span>
               </Button>
               <Button
                 size="sm"

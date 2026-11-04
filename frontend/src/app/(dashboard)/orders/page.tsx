@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThermalReceipt } from "@/components/receipt/thermal-receipt";
 
 export default function SalesHistoryPage() {
   const { token } = useAuth();
@@ -354,70 +355,7 @@ export default function SalesHistoryPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Bill Meta */}
-            <div className="p-3.5 rounded-xl bg-cream-50 border border-coffee-200/80 text-xs space-y-1.5">
-              <div className="flex justify-between">
-                <span className="text-coffee-500">วัน-เวลาที่ขาย:</span>
-                <span className="font-semibold text-coffee-900">
-                  {formatDateTime(selectedOrder.createdAt)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-coffee-500">ผู้บันทึก (Owner UID):</span>
-                <span className="font-mono text-coffee-700">
-                  {selectedOrder.createdBy}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-coffee-500">สถานะ:</span>
-                <Badge variant="success" className="text-[10px]">
-                  ชำระเงินสำเร็จ (Paid)
-                </Badge>
-              </div>
-            </div>
-
-            {/* Items Breakdown Table */}
-            <div className="border border-coffee-200 rounded-xl overflow-hidden">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-coffee-100/60 border-b border-coffee-200 text-coffee-700">
-                  <tr>
-                    <th className="py-2.5 px-3 font-semibold">รายการ</th>
-                    <th className="py-2.5 px-3 font-semibold text-center">จำนวน</th>
-                    <th className="py-2.5 px-3 font-semibold text-right">ราคาต่อหน่วย</th>
-                    <th className="py-2.5 px-3 font-semibold text-right">รวม (บาท)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-coffee-100">
-                  {selectedOrder.items.map((it, idx) => (
-                    <tr key={idx} className="hover:bg-cream-50/50">
-                      <td className="py-2.5 px-3 font-medium text-coffee-950 font-prompt">
-                        {it.productName}
-                      </td>
-                      <td className="py-2.5 px-3 text-center text-coffee-700">
-                        {it.quantity}
-                      </td>
-                      <td className="py-2.5 px-3 text-right text-coffee-700 font-prompt">
-                        {formatCurrency(it.unitPriceSatang)}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-coffee-950 font-prompt">
-                        {formatCurrency(it.subtotalSatang)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Total Section */}
-            <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200/80 flex justify-between items-center">
-              <div>
-                <p className="text-xs text-amber-800">จำนวนรวม: {selectedOrder.totalQuantity} ชิ้น</p>
-                <p className="text-sm font-bold text-coffee-950 font-prompt">ยอดสุทธิทั้งสิ้น</p>
-              </div>
-              <div className="text-xl font-bold text-amber-900 font-prompt">
-                {formatCurrency(selectedOrder.totalSatang)}
-              </div>
-            </div>
+            <ThermalReceipt order={selectedOrder} />
 
             <div className="flex items-center justify-between pt-2">
               <Button
@@ -427,7 +365,7 @@ export default function SalesHistoryPage() {
                 className="flex items-center gap-1.5 text-xs text-coffee-800 border-coffee-300 hover:bg-cream-100"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>พิมพ์ใบเสร็จ</span>
+                <span>พิมพ์ใบเสร็จ (Thermal Print)</span>
               </Button>
               <Button
                 variant="outline"
